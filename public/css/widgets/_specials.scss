@@ -1,0 +1,78 @@
+@use "../helpers" as *;
+
+.vmb-specials {
+
+    .vmb-special {
+        background-color: map-get($colors, 'brand-blue');
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        margin-bottom: 30px;
+        display: flex!important;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        
+        
+        h3, p, span {
+            color: white;
+            font-family: map-get($fonts, 'opensans');
+        }
+
+        h3.package-name {
+            font-size: 18px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        p.description, .validity {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .special-details {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .validity {
+            padding-top: 15px;
+            margin-top: auto;
+            
+            span:first-child {
+                display: block;
+            }
+        }
+
+        .theme-button {
+            max-width: 250px;
+            min-width: 250px;
+            margin: 30px auto 0px;
+        }
+    }
+
+
+    a.theme-button {
+        background-color: #FFD600;
+        border-color: #FFB800;
+        font-family: "Poppins", Sans-serif !important;
+        font-size: 16px;
+        line-height: 1em;
+        font-weight: 500;
+        border-style: none;
+        border-radius: 8px 8px 8px 8px;
+        display: inline-block;
+        padding: 12px 20px;
+        color: #00497F;
+        font-weight: bold;
+        margin-top: 30px;
+        transition: all ease .5s;
+    }
+
+    a.theme-button:hover {
+        background-color: #fab400;
+        transition: all ease .5s;
+    }
+}

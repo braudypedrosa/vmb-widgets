@@ -1,0 +1,16 @@
+Field ID | Site ID | Site Name
+
+89 | 1848331 | Beach Colony  
+89 | 1848334 | Beach Cove 
+89 | 1854004 | Captains Quarters
+105 | 1858575 | Caravelle 
+83 | 1848338 | Carolina Winds 
+92 | 1853973 | Crown Reef 
+83 | 1848345 | Forest Dunes 
+83 | 1848346 | Hotel Blue 
+89 | 1858578 | Landmark Resort 
+83 | 1848358 | Ocean Creek 
+83 | 1848360 | Palace Resort 
+83 | 1853967 | Palms Resort 
+89 | 1854002 | Sea Watch Resort 
+83 | 1854003 | South Wind on the Ocean 

@@ -1,0 +1,47 @@
+@use "../helpers" as *;
+
+.vmb-reviews {
+    width: 100%;
+    position: relative;
+
+    .vmb-review {
+        box-shadow: 0px 3px 14px rgba(0, 0, 0, 0.14);
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        gap: 30px;
+        margin-bottom: 10px;
+        position: relative;
+
+        .fa-quote-left {
+            color: map-get($colors, 'brand-blue');
+            font-size: 45px;
+        } 
+ 
+        .review-details {
+            
+            .comment {
+                font-size: 14px;
+                font-family: map-get($fonts, 'poppins');
+                color:  map-get($colors, 'text');
+            }
+ 
+            .rating {
+                margin-top: 30px;
+                span {
+                    color:  map-get($colors, 'grey');
+                }
+                .filled {
+                    color: map-get($colors, 'brand-yellow');
+                }
+            }
+ 
+            .author { 
+                display: block; 
+                font-weight: bold;
+                font-family: map-get($fonts, 'poppins');
+                color:  map-get($colors, 'text');
+            }
+        }
+    }
+}

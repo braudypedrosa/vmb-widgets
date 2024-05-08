@@ -1,0 +1,63 @@
+@use 'helpers' as *;
+@use 'widgets';
+
+
+.vmb-widget {
+
+    .slick-list {
+        margin: 0 -15px;
+        padding: 10px;
+        height: auto!important;
+    }
+    
+    .slick-slide {
+        margin: 0 20px;
+        height: inherit !important;
+    }
+    
+    .slick-track
+    {
+        display: flex !important;
+    }
+    
+    .slick-dots {
+        bottom: -40px;
+    }
+
+    .slick-dots li button:before {
+        font-size: 15px;
+    }
+    
+    .slick-arrow::before {
+        font-family: "Font Awesome 5 Free"!important;
+    }
+
+    .slick-arrow {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0px 3px 14px #0000003b;
+        border-radius: 100%;
+
+        @include maxBreakpoint('sm') {
+            display: none;
+        }
+    }
+
+    .slick-arrow::before {
+        color: map-get($colors, 'brand-blue')
+    }
+
+    .slick-prev { 
+        left: -60px;
+    }
+
+    .slick-next {
+        right: -60px;
+    }
+}
+
+

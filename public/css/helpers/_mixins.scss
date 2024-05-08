@@ -1,0 +1,48 @@
+//Media breakpoints used in mixins, 
+$minBreakpoints : (
+    'xs' : 36rem,
+    'sm' : 48rem,
+    'md' : 64.0625rem,
+    'lg' : 80rem,
+    'xl' : 1921px
+);
+
+
+//Media Queries
+@mixin minBreakpoint($minBreakpoint) {
+    // Retrieves the value from the key
+    $value: map-get($minBreakpoints, $minBreakpoint);
+  
+    // If the key exists in the map
+    @if $value != null {
+      // Prints a media query based on the value
+        @media screen and (min-width: $value) {
+            @content;
+        }
+    }
+  
+    // If the key doesn't exist in the map
+    @else {
+        @warn "Unfortunately, no value could be retrieved from `#{$minBreakpoint}`. "
+            + "Please make sure it is defined in `$minBreakpoints` map.";
+    }
+}
+
+@mixin maxBreakpoint($minBreakpoint) {
+    // Retrieves the value from the key
+    $value: map-get($minBreakpoints, $minBreakpoint);
+  
+    // If the key exists in the map
+    @if $value != null {
+      // Prints a media query based on the value
+        @media screen and (max-width: ($value - .02)) {
+            @content;
+        }
+    }
+  
+    // If the key doesn't exist in the map
+    @else {
+        @warn "Unfortunately, no value could be retrieved from `#{$minBreakpoint}`. "
+            + "Please make sure it is defined in `$minBreakpoints` map.";
+    }
+}
