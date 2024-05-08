@@ -167,12 +167,15 @@ class VMB_API_HELPER {
                         $post_id = wp_insert_post(array(
                             'post_title'=> $displayName,
                             'post_type'=> 'vmb_specials',
-                            'post_status'=> 'publish'
-                        ));
+                            'post_status'=> 'publish',
+                            'post_content'=> $longDescription,
+                            'post_name' => $displayName .' - '. $connectedProperty
+                        )); 
                     } else { // update logic here
                         wp_update_post(array(
                             'ID' => $post_id,
                             'post_title' =>$displayName,
+                            'post_name' => $displayName .' - '. $connectedProperty
                         ));
                     }
                     

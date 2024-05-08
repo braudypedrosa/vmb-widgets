@@ -154,6 +154,32 @@ function display_vmb_specials($atts) {
 
 add_shortcode('vmb_specials', 'display_vmb_specials');
 
+function display_related_specials() {
+    global $post;
+    $post_id = $post->ID;
+
+    $connected_property = get_post_meta($post_id, 'connected_property', true);
+
+    $specials = get_posts(
+        array(
+            'numberposts' => -1,
+            'post_type' => 'vmb_specials',
+            'meta_key' => 'connected_property',
+            'meta_value' => $connected_property
+        )
+    );
+
+    foreach($specials as $special) {
+        if($special->ID != $post_id) {
+            $output .= '<li class="vmb-specials-list-item"><a href="'.get_the_permalink($special->ID).'">'.$special->post_title.'</a></li>';
+        }
+    }
+
+    return '<h4>Related deals from '.$connected_property.'</h4><ul class="vmb-specials-list">'.$output.'</ul>';
+}
+
+add_shortcode('related_specials', 'display_related_specials');
+
 
 function test_shortcode_func() {
 

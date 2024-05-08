@@ -230,7 +230,7 @@ class Vmb_Widgets_Admin {
 			"rewrite" => [ "slug" => "specials", "with_front" => true ],
 			"query_var" => true,
 			"menu_icon" => 'dashicons-art',
-			"supports" => [ "title", "custom-fields", "excerpt" ],
+			"supports" => [ "title", "custom-fields", "excerpt", 'editor' ],
 			"show_in_graphql" => false,
 		];
 		

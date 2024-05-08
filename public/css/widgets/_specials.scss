@@ -76,3 +76,19 @@
         transition: all ease .5s;
     }
 }
+
+.vmb-specials-list {
+    padding-left: 0;
+    margin-left: 0;
+
+    .vmb-specials-list-item {
+        list-style: none;
+        margin-bottom: 15px;
+        
+        a {
+            font-weight: bold;
+            text-decoration: none;
+            font-family: map-get($fonts, 'opensans');
+        }
+    }
+}

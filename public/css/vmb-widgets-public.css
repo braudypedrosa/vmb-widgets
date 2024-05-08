@@ -100,6 +100,20 @@
   transition: all ease 0.5s;
 }
 
+.vmb-specials-list {
+  padding-left: 0;
+  margin-left: 0;
+}
+.vmb-specials-list .vmb-specials-list-item {
+  list-style: none;
+  margin-bottom: 15px;
+}
+.vmb-specials-list .vmb-specials-list-item a {
+  font-weight: bold;
+  text-decoration: none;
+  font-family: "Open Sans";
+}
+
 .vmb-widget .slick-list {
   margin: 0 -15px;
   padding: 10px;
