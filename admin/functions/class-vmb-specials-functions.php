@@ -84,7 +84,7 @@ class Vmb_Specials_Functions {
             
             if($results['code'] == 'success') {
                 update_post_meta($resort->ID, 'specials_' . $resortName, $results['response']);
-                $helper->generateVMBSpecials($results['response'][$resortName]['Packages'], $connectedProperty);
+                $helper->generateVMBSpecials($results['response'][$resortName]['Packages'], $connectedProperty, $resort->ID);
             }
 
         }

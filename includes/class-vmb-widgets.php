@@ -190,6 +190,9 @@ class Vmb_Widgets {
 		// initialization hooks
 		$this->loader->add_filter( 'admin_menu', $plugin_admin, 'menu_init' );
 		$this->loader->add_action( 'init', $plugin_admin, 'register_vmb_post_types' );
+		$this->loader->add_action( 'init', $plugin_admin, 'register_vmb_taxonomy' );
+
+		
 
 		// custom columns
 		$this->loader->add_filter('manage_vmb_reviews_posts_columns', $plugin_admin, 'set_vmb_reviews_custom_columns');

@@ -159,6 +159,7 @@ function display_related_specials() {
     $post_id = $post->ID;
 
     $connected_property = get_post_meta($post_id, 'connected_property', true);
+    $output = '';
 
     $specials = get_posts(
         array(
@@ -175,7 +176,7 @@ function display_related_specials() {
         }
     }
 
-    return '<h4>Related deals from '.$connected_property.'</h4><ul class="vmb-specials-list">'.$output.'</ul>';
+    return '<h4 class="vmb-specials-list-heading">Related deals from '.$connected_property.'</h4><ul class="vmb-specials-list">'.$output.'</ul>';
 }
 
 add_shortcode('related_specials', 'display_related_specials');

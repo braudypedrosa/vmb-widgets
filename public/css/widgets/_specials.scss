@@ -77,6 +77,13 @@
     }
 }
 
+.vmb-specials-list-heading {
+    font-size: 20px;
+    color: #00497F;
+    letter-spacing: 0.015em;
+    line-height: 1.4em;
+}
+
 .vmb-specials-list {
     padding-left: 0;
     margin-left: 0;
@@ -86,8 +93,6 @@
         margin-bottom: 15px;
         
         a {
-            font-weight: bold;
-            text-decoration: none;
             font-family: map-get($fonts, 'opensans');
         }
     }

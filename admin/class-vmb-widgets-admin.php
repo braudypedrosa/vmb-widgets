@@ -239,6 +239,63 @@ class Vmb_Widgets_Admin {
 		register_post_type( "vmb_specials", $args_special );
 	}
 
+	function register_vmb_taxonomy() {
+	
+		$labels = [
+			"name" => esc_html__( "Categories", "vmb_widgets" ),
+			"singular_name" => esc_html__( "Category", "vmb_widgets" ),
+			"menu_name" => esc_html__( "Categories", "vmb_widgets" ),
+			"all_items" => esc_html__( "All Categories", "vmb_widgets" ),
+			"edit_item" => esc_html__( "Edit Category", "vmb_widgets" ),
+			"view_item" => esc_html__( "View Category", "vmb_widgets" ),
+			"update_item" => esc_html__( "Update Category name", "vmb_widgets" ),
+			"add_new_item" => esc_html__( "Add new Category", "vmb_widgets" ),
+			"new_item_name" => esc_html__( "New Category name", "vmb_widgets" ),
+			"parent_item" => esc_html__( "Parent Category", "vmb_widgets" ),
+			"parent_item_colon" => esc_html__( "Parent Category:", "vmb_widgets" ),
+			"search_items" => esc_html__( "Search Categories", "vmb_widgets" ),
+			"popular_items" => esc_html__( "Popular Categories", "vmb_widgets" ),
+			"separate_items_with_commas" => esc_html__( "Separate Categories with commas", "vmb_widgets" ),
+			"add_or_remove_items" => esc_html__( "Add or remove Categories", "vmb_widgets" ),
+			"choose_from_most_used" => esc_html__( "Choose from the most used Categories", "vmb_widgets" ),
+			"not_found" => esc_html__( "No Categories found", "vmb_widgets" ),
+			"no_terms" => esc_html__( "No Categories", "vmb_widgets" ),
+			"items_list_navigation" => esc_html__( "Categories list navigation", "vmb_widgets" ),
+			"items_list" => esc_html__( "Categories list", "vmb_widgets" ),
+			"back_to_items" => esc_html__( "Back to Categories", "vmb_widgets" ),
+			"name_field_description" => esc_html__( "The name is how it appears on your site.", "vmb_widgets" ),
+			"parent_field_description" => esc_html__( "Assign a parent term to create a hierarchy. The term Jazz, for example, would be the parent of Bebop and Big Band.", "vmb_widgets" ),
+			"slug_field_description" => esc_html__( "The slug is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.", "vmb_widgets" ),
+			"desc_field_description" => esc_html__( "The description is not prominent by default; however, some themes may show it.", "vmb_widgets" ),
+		];
+	
+		
+		$args = [
+			"label" => esc_html__( "Categories", "vmb_widgets" ),
+			"labels" => $labels,
+			"public" => true,
+			"publicly_queryable" => true,
+			"hierarchical" => true,
+			"show_ui" => true,
+			"show_in_menu" => true,
+			"show_in_nav_menus" => true,
+			"query_var" => true,
+			"rewrite" => [ 'slug' => 'specials_category', 'with_front' => true, ],
+			"show_admin_column" => true,
+			"show_in_rest" => true,
+			"show_tagcloud" => false,
+			"rest_base" => "specials_category",
+			"rest_controller_class" => "WP_REST_Terms_Controller",
+			"rest_namespace" => "wp/v2",
+			"show_in_quick_edit" => true,
+			"sort" => false,
+			"show_in_graphql" => false,
+		];
+
+		register_taxonomy( "specials_category", [ "vmb_specials" ], $args );
+	}
+
+
 	// register custom columns
 	public function set_vmb_custom_columns($columns) {
 

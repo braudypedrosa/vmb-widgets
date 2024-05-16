@@ -128,7 +128,7 @@ class VMB_API_HELPER {
     }
 
 
-    public function generateVMBSpecials($data, $connectedProperty = '') {
+    public function generateVMBSpecials($data, $connectedProperty = '', $parent_post_id = '') {
 
         global $wpdb;
         $helper = new VMB_HELPER();
@@ -141,7 +141,7 @@ class VMB_API_HELPER {
                 $uniqueID = $helper->slugify($connectedProperty) . '-' . $packageID;
 
                 $active = $specials['Active'];
-                $promote = $specials['Promote'];
+                // $promote = $specials['Promote'];
                 $bookable = $specials['Bookable'];
 
                 $startDate = $specials['CalendarStartDate'];
@@ -160,7 +160,7 @@ class VMB_API_HELPER {
     
                 
                 // only add active package
-                if($active && $promote && $bookable) {
+                if($active && $bookable) {
 
                     // add special if search returns null
                     if($post_id == null) {
@@ -168,13 +168,14 @@ class VMB_API_HELPER {
                             'post_title'=> $displayName,
                             'post_type'=> 'vmb_specials',
                             'post_status'=> 'publish',
-                            'post_content'=> $longDescription,
+                            'post_content'=> strip_tags($longDescription, ['p', 'a', 'img', 'strong']),
                             'post_name' => $displayName .' - '. $connectedProperty
                         )); 
                     } else { // update logic here
                         wp_update_post(array(
                             'ID' => $post_id,
                             'post_title' =>$displayName,
+                            'post_content'=> strip_tags($longDescription, ['p', 'a', 'img', 'strong']),
                             'post_name' => $displayName .' - '. $connectedProperty
                         ));
                     }
@@ -188,6 +189,9 @@ class VMB_API_HELPER {
                     update_post_meta($post_id, 'vmb_special_longDescription', $longDescription);
                     update_post_meta($post_id, 'vmb_special_notice', $noNotice);
                     update_post_meta($post_id, 'connected_property', $connectedProperty);
+                    update_post_meta($post_id, 'vmb_special_package_url', get_field('reservation_url', $parent_post_id).'?packageId='.$packageID);
+                    update_post_meta($post_id, 'connected_property_permalink', get_the_permalink($parent_post_id));
+                    update_post_meta($post_id, 'connected_property_featured_image', get_the_post_thumbnail_url($parent_post_id, 'full'));
                 }
                 
             }
