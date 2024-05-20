@@ -182,12 +182,6 @@ add_shortcode('related_specials', 'display_related_specials');
 
 function display_specials_preview($atts) {
 
-    global $post;
-    $post_id = $post->ID;
-
-    $connected_property = get_post_meta($post_id, 'connected_property', true);
-    $output = '';
-
     $atts = shortcode_atts(
 		array(
 			'resort_id' => '',
@@ -195,35 +189,29 @@ function display_specials_preview($atts) {
 		), $atts, 
     'specials_preview' );
 
-    // check if post type exists
-    if(!post_type_exists('vmb_specials')) {
-        return 'VMB Specials post type is required to use this plugin!';
-    }
 
-    if(get_post_type( $post_id ) != 'resort' && $atts['resort_id'] == '') {
+    if(!isset($atts['resort_id'])) {
         return 'Resort ID is required if used outside resort pages.';
     }
 
-    if(get_post_type( $post_id ) == 'resort') {
-        $atts['resort_id'] = $post_id;
-    }
 
     
-    
+    $connected_property = get_the_title($atts['resort_id']);
+    $output = '';
 
     $specials = get_posts(
         array(
             'numberposts' => $atts['limit'],
             'post_type' => 'vmb_specials',
             'meta_key' => 'connected_property',
-            'meta_value' => $connected_property
+            'meta_value' => $connected_property,
         )
     );
 
 
     if(count($specials) >= 1) {
         
-        $output .= '<div id="resort-'.$atts['resort_id'].'" class="specials-preview"><ul style="display: none;" class="specials-list">';
+        $output .= '<div data-connected_property="'.$connected_property.'" id="resort-'.$atts['resort_id'].'" class="specials-preview"><ul style="display: none;" class="specials-list">';
 
         foreach($specials as $special) {
             $id = $special->ID;
