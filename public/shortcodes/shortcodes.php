@@ -93,7 +93,6 @@ function display_vmb_specials($atts) {
     if(get_post_type( $post_id ) != 'resort' && $atts['resort_id'] == '') {
         return 'Resort ID is required if used outside resort pages.';
     } else {
-
         $atts['resort_id'] = $post_id;
     }
 
@@ -181,6 +180,60 @@ function display_related_specials() {
 
 add_shortcode('related_specials', 'display_related_specials');
 
+function display_specials_preview($atts) {
+
+    global $post;
+    $post_id = $post->ID;
+    $output = '';
+
+    $atts = shortcode_atts(
+		array(
+			'resort_id' => '',
+            'limit' => 4,
+		), $atts, 
+    'specials_preview' );
+
+    // check if post type exists
+    if(!post_type_exists('vmb_specials')) {
+        return 'VMB Specials post type is required to use this plugin!';
+    }
+
+    if(get_post_type( $post_id ) != 'resort' && $atts['resort_id'] == '') {
+        return 'Resort ID is required if used outside resort pages.';
+    } else {
+        $atts['resort_id'] = $post_id;
+    }
+
+    $specials = get_posts(
+        array(
+            'numberposts' => $atts['limit'],
+            'post_type' => 'vmb_specials',
+        )
+    );
+
+
+    if(count($specials) >= 1) {
+        
+        $output .= '<div class="specials-preview"><ul style="display: none;" class="specials-list">';
+
+        foreach($specials as $special) {
+            $id = $special->ID;
+            $name = $special->post_title;
+            $permalink = get_the_permalink($id);
+
+            $output .= '<li class="special-preview" id="sp-'.$id.'">
+                    <a href="'.$permalink.'">'.$name.'</a>
+                </li>';
+        }
+
+        $output .= '</ul><a href="#" class="preview-btn show-trigger">View Specials</a></div>';
+
+    }
+
+    return $output;
+}
+
+add_shortcode('specials_preview', 'display_specials_preview');
 
 function test_shortcode_func() {
 

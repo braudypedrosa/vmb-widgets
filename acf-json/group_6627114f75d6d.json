@@ -3,13 +3,6 @@
     "title": "Resort",
     "fields": [
         {
-            "allow_backendsearch": 0,
-            "show_column_filter": false,
-            "allow_bulkedit": 0,
-            "allow_quickedit": 0,
-            "show_column": 0,
-            "show_column_weight": 1000,
-            "show_column_sortable": false,
             "key": "field_6627114f97226",
             "label": "Site Id",
             "name": "site_id",
@@ -23,13 +16,6 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "allow_backendsearch": 0,
             "show_column_filter": false,
             "allow_bulkedit": 0,
@@ -37,6 +23,13 @@
             "show_column": 0,
             "show_column_weight": 1000,
             "show_column_sortable": false,
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_6628b7a2a02e9",
             "label": "Review Field ID",
             "name": "review_field_id",
@@ -50,13 +43,6 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "allow_backendsearch": 0,
             "show_column_filter": false,
             "allow_bulkedit": 0,
@@ -64,6 +50,13 @@
             "show_column": 0,
             "show_column_weight": 1000,
             "show_column_sortable": false,
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_66271a0cb6268",
             "label": "Site Name",
             "name": "site_name",
@@ -77,13 +70,6 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "allow_backendsearch": 0,
             "show_column_filter": false,
             "allow_bulkedit": 0,
@@ -91,6 +77,13 @@
             "show_column": 0,
             "show_column_weight": 1000,
             "show_column_sortable": false,
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_6628b84242407",
             "label": "Reservation URL",
             "name": "reservation_url",
@@ -104,6 +97,13 @@
                 "class": "",
                 "id": ""
             },
+            "allow_backendsearch": 0,
+            "show_column_filter": false,
+            "allow_bulkedit": 0,
+            "allow_quickedit": 0,
+            "show_column": 0,
+            "show_column_weight": 1000,
+            "show_column_sortable": false,
             "default_value": "",
             "placeholder": ""
         }
@@ -127,5 +127,5 @@
     "description": "",
     "show_in_rest": 0,
     "qef_simple_location_rules": 0,
-    "modified": 1713944650
+    "modified": 1716124519
 }

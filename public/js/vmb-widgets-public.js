@@ -41,5 +41,17 @@ jQuery(document).ready(function(){
 	});
 
 
+	jQuery('.specials-preview').each(function(){
+
+		let list = jQuery(this).find('.specials-list');
+
+		jQuery(this).find('.show-trigger').click(function(){
+			list.slideDown('fast');
+			jQuery(this).removeClass('show-trigger').html('View All Specials');
+		});
+
+	})
+
+
 
 });

@@ -13,7 +13,7 @@
  */
 
 
-$vmb_settings = json_decode(get_option('vmb_settings'));
+$vmb_settings = get_option('vmb_settings') ? json_decode(get_option('vmb_settings')) : '';
 
 ?>
 
@@ -48,24 +48,24 @@ $vmb_settings = json_decode(get_option('vmb_settings'));
             <!-- 3577a1b61ad7ef19043038e6c3ae21d085dbc0d72a33c0b2ca -->
             <div class="vmb-input-wrapper input-text">
                 <label for="alchemer-token">API Token</label>
-                <input class="vmb-input" type="text" name="alchemer-token" id="alchemer-token" value="<?= $vmb_settings->alchemer_token; ?>">
+                <input class="vmb-input" required type="text" name="alchemer-token" id="alchemer-token" value="<?= (($vmb_settings != '') ? $vmb_settings->alchemer_token : ''); ?>">
             </div>
             <!-- A9J/CA2zvJRcQ -->
             <div class="vmb-input-wrapper input-text">
                 <label for="alchemer-secret">API Secret</label>
-                <input class="vmb-input" type="text" name="alchemer-secret" id="alchemer-secret" value="<?= $vmb_settings->alchemer_secret; ?>">
+                <input class="vmb-input" required type="text" name="alchemer-secret" id="alchemer-secret" value="<?= (($vmb_settings != '') ? $vmb_settings->alchemer_secret : ''); ?>">
             </div>
 
             <h3 class="vmb-title">Guestdesk API Logins (for Specials)</h3>
             <!-- buildupbookings -->
             <div class="vmb-input-wrapper input-text">
                 <label for="guestdesk-username">Username</label>
-                <input class="vmb-input" type="text" name="guestdesk-username" id="guestdesk-username" value="<?= $vmb_settings->guestdesk_username; ?>">
+                <input class="vmb-input" required type="text" name="guestdesk-username" id="guestdesk-username" value="<?= (($vmb_settings != '') ? $vmb_settings->guestdesk_username : ''); ?>">
             </div>
             <!-- Rv3Vb5LgPrQYkEh7 -->
             <div class="vmb-input-wrapper input-text">
                 <label for="guestdesk-password">Password</label>
-                <input class="vmb-input" type="text" name="guestdesk-password" id="guestdesk-password" value="<?= $vmb_settings->guestdesk_password; ?>">
+                <input class="vmb-input" required type="text" name="guestdesk-password" id="guestdesk-password" value="<?= (($vmb_settings != '') ? $vmb_settings->guestdesk_password : ''); ?>">
             </div>
             
             <button class="vmb-button" type="submit">Save Settings</button> 
