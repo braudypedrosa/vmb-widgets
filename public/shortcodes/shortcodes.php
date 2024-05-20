@@ -184,6 +184,8 @@ function display_specials_preview($atts) {
 
     global $post;
     $post_id = $post->ID;
+
+    $connected_property = get_post_meta($post_id, 'connected_property', true);
     $output = '';
 
     $atts = shortcode_atts(
@@ -200,33 +202,42 @@ function display_specials_preview($atts) {
 
     if(get_post_type( $post_id ) != 'resort' && $atts['resort_id'] == '') {
         return 'Resort ID is required if used outside resort pages.';
-    } else {
+    }
+
+    if(get_post_type( $post_id ) == 'resort') {
         $atts['resort_id'] = $post_id;
     }
+
+    
+    
 
     $specials = get_posts(
         array(
             'numberposts' => $atts['limit'],
             'post_type' => 'vmb_specials',
+            'meta_key' => 'connected_property',
+            'meta_value' => $connected_property
         )
     );
 
 
     if(count($specials) >= 1) {
         
-        $output .= '<div class="specials-preview"><ul style="display: none;" class="specials-list">';
+        $output .= '<div id="resort-'.$atts['resort_id'].'" class="specials-preview"><ul style="display: none;" class="specials-list">';
 
         foreach($specials as $special) {
             $id = $special->ID;
             $name = $special->post_title;
             $permalink = get_the_permalink($id);
+            $reservationURL = get_field('reservation_url', $atts['resort_id']);
+            
 
             $output .= '<li class="special-preview" id="sp-'.$id.'">
                     <a href="'.$permalink.'">'.$name.'</a>
                 </li>';
         }
 
-        $output .= '</ul><a href="#" class="preview-btn show-trigger">View Specials</a></div>';
+        $output .= '</ul><a href="#" class="preview-btn show-trigger" data-href="'.$reservationURL.'">View Specials</a></div>';
 
     }
 
