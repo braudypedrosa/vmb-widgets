@@ -229,7 +229,7 @@ function display_specials_preview($atts) {
             $id = $special->ID;
             $name = $special->post_title;
             $permalink = get_the_permalink($id);
-            $reservationURL = get_field('reservation_url', $atts['resort_id']);
+            $reservationURL = get_the_permalink($atts['resort_id']) . '#specials';
             
 
             $output .= '<li class="special-preview" id="sp-'.$id.'">
@@ -237,7 +237,7 @@ function display_specials_preview($atts) {
                 </li>';
         }
 
-        $output .= '</ul><a href="#" class="preview-btn show-trigger" data-href="'.$reservationURL.'">View Specials</a></div>';
+        $output .= '</ul><a class="preview-btn show-trigger" data-href="'.$reservationURL.'">View Specials</a></div>';
 
     }
 
