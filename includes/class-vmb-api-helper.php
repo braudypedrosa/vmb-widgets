@@ -141,7 +141,7 @@ class VMB_API_HELPER {
                 $uniqueID = $helper->slugify($connectedProperty) . '-' . $packageID;
 
                 $active = $specials['Active'];
-                // $promote = $specials['Promote'];
+                $promote = $specials['Promote'];
                 $bookable = $specials['Bookable'];
 
                 $startDate = $specials['CalendarStartDate'];
@@ -160,7 +160,7 @@ class VMB_API_HELPER {
     
                 
                 // only add active package
-                if($active && $bookable) {
+                if($active && $bookable && $promote) {
 
                     // add special if search returns null
                     if($post_id == null) {
