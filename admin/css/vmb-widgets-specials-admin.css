@@ -1,0 +1,53 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+.editable {
+  cursor: pointer;
+}
+
+.edit-mode {
+  background-color: #ffffe0; /* Light yellow color */
+}
+
+.readonly {
+  color: #aaa;
+}
+
+.disabled {
+  background-color: #e0e0e0;
+  color: #999;
+}
+
+#specialsTable {
+  margin-top: 10px;
+}
+
+.pagination {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.pagination button {
+  margin: 0 2px;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background-color: #f2f2f2;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background-color: #007bff;
+  color: white;
+}/*# sourceMappingURL=vmb-widgets-specials-admin.css.map */

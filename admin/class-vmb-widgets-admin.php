@@ -66,6 +66,18 @@ class Vmb_Widgets_Admin {
             },
 			'dashicons-store'
         ); 
+
+		// Add submenu page
+		add_submenu_page(
+			'vmb_settings', 
+			__( 'Manage Specials', 'textdomain' ),
+			'Manage Specials', 
+			'manage_options', 
+			'manage_specials', 
+			function() {
+				include_once(plugin_dir_path(dirname(__FILE__)) . 'admin/partials/vmb-widgets-specials-admin-display.php');
+			}
+		);
 	}
 
 	// save settings
@@ -236,7 +248,7 @@ class Vmb_Widgets_Admin {
 		
 	
 		register_post_type( "vmb_reviews", $args_review );
-		register_post_type( "vmb_specials", $args_special );
+		// register_post_type( "vmb_specials", $args_special );
 	}
 
 	function register_vmb_taxonomy() {
@@ -388,6 +400,8 @@ class Vmb_Widgets_Admin {
 
 		wp_enqueue_style( $this->plugin_name . '_normalize', plugin_dir_url( __FILE__ ) . 'css/normalize.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/vmb-widgets-admin.css', array(), $this->version, 'all' );
+
+		wp_enqueue_style( $this->plugin_name . '_specials', plugin_dir_url( __FILE__ ) . 'css/vmb-widgets-specials-admin.css', array(), $this->version, 'all' );
 		
 
 	}
@@ -413,6 +427,35 @@ class Vmb_Widgets_Admin {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/vmb-widgets-admin.js', array( 'jquery' ), $this->version, false );
 
+		wp_enqueue_script( $this->plugin_name . '_sweetalert', 'https://cdn.jsdelivr.net/npm/sweetalert2@11', null, $this->version, false );
+		
+		wp_enqueue_script( $this->plugin_name . '_specials', plugin_dir_url( __FILE__ ) . 'js/vmb-widgets-specials-admin.js', array( 'jquery' ), $this->version, false );
+
+		$cached_specials = get_option('vmb_api_cached_specials', true);
+		$api_synced = get_option('vmb_api_specials_synced', true);
+
+		wp_localize_script( $this->plugin_name . '_specials', 'vmb_ajax',  
+			array(
+				'cached_specials' => $cached_specials,
+				'ajax_url' => admin_url('admin-ajax.php'),
+        		'nonce' => wp_create_nonce('specials_nonce')
+			)
+		);
+
+	}
+
+	function save_table() {
+		check_ajax_referer('specials_nonce', 'security');
+
+		$jsonString = isset($_POST['jsonData']) ? $_POST['jsonData'] : '';
+    
+		// Remove backslashes
+		$cleanedJsonString = stripslashes($jsonString);
+
+		update_option('vmb_api_cached_specials', $cleanedJsonString);
+		update_option('vmb_api_specials_synced', false);
+	
+		wp_send_json_success(array('message' => 'Specials stored in cache!'));
 	}
 
 }
