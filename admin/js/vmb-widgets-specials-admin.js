@@ -89,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             row.classList.add('disabled');
         }
+        updateSpecialData(row);
         makeEditable(row, !isDisabled);
         isDataSaved = false;
     }
@@ -97,10 +98,32 @@ document.addEventListener('DOMContentLoaded', function() {
         var editable = row.classList.contains('edit-mode');
         if (editable) {
             // Save data
+            updateSpecialData(row);
             makeEditable(row, false);
         } else {
             // Enable edit mode
             makeEditable(row, true);
+        }
+    }
+
+    function updateSpecialData(row) {
+        var cells = row.getElementsByTagName('td');
+        var specialId = cells[1].textContent;
+        var resortId = cells[0].textContent;
+        var specialName = cells[3].textContent;
+        var specialDescription = cells[4].textContent;
+        var expiration = new Date(cells[5].textContent).toISOString();
+        var isDisabled = row.getAttribute('data-disabled') === 'true';
+
+        for (var i = 0; i < allSpecials.length; i++) {
+            if (allSpecials[i].id == specialId) {
+                allSpecials[i].resort_id = resortId;
+                allSpecials[i].name = specialName;
+                allSpecials[i].description = specialDescription;
+                allSpecials[i].expiration = expiration;
+                allSpecials[i].disabled = isDisabled;
+                break;
+            }
         }
     }
 
@@ -162,6 +185,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         var results = JSON.stringify(data);
+
+        console.log(results);
 
         jQuery.ajax({
             type: 'POST',
@@ -225,9 +250,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     var dummyJson = JSON.stringify([
-        { "id": "1", "resort_id": "101", "resort": "Resort A", "name": "Special One", "description": "Description for Special One", "expiration": "June 14, 2024", "disabled": false },
-        { "id": "2", "resort_id": "102", "resort": "Resort B", "name": "Special Two", "description": "Description for Special Two", "expiration": "June 14, 2024", "disabled": false },
-        { "id": "3", "resort_id": "103", "resort": "Resort C", "name": "Special Three", "description": "Description for Special Three", "expiration": "June 14, 2024", "disabled": false },
+        { "id": "1", "resort_id": "101", "resort": "Resort A", "name": "Special One", "description": "Description for Special One", "expiration": "2024-06-14T00:00:00Z", "disabled": false },
+        { "id": "2", "resort_id": "102", "resort": "Resort B", "name": "Special Two", "description": "Description for Special Two", "expiration": "2024-06-14T00:00:00Z", "disabled": false },
+        { "id": "3", "resort_id": "103", "resort": "Resort C", "name": "Special Three", "description": "Description for Special Three", "expiration": "2024-06-14T00:00:00Z", "disabled": false },
         // Add more rows as needed for testing pagination
     ]);
 

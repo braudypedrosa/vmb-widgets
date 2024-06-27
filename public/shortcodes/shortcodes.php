@@ -196,6 +196,26 @@ function display_specials_preview($atts) {
     return $output;
 }
 
+
+function display_special($atts) {
+    $atts = shortcode_atts(
+        array(
+            'id' => '',
+        ),
+        $atts,
+        'display_special'
+    );
+
+    $specials_json = get_option('vmb_api_cached_specials');
+    $specials = json_decode($specials_json, true);
+
+    $output = '';
+
+    return $output;
+}
+add_shortcode('display_special', 'display_special_shortcode');
+
+
 add_shortcode('specials_preview', 'display_specials_preview');
 
 function test_shortcode_func() {
