@@ -21,8 +21,8 @@ function display_vmb_reviews($atts) {
 
     if(get_post_type( $post_id ) != 'resort' && $atts['resort_id'] == '') {
         return 'Resort ID is required if used outside resort pages.';
-    }else {
-        $atts['resort_id'] = $post_id;
+    } else {
+        $post_id = $atts['resort_id'];
     }
 
     $name = get_the_title( $atts['resort_id'] );
@@ -35,6 +35,13 @@ function display_vmb_reviews($atts) {
             'meta_value' => $name
         )
     );
+
+    var_dump(array(
+        'numberposts' => $atts['limit'],
+        'post_type' => 'vmb_reviews',
+        'meta_key' => 'connected_property',
+        'meta_value' => $name
+    ));
 
     
     foreach($reviews as $review) {
