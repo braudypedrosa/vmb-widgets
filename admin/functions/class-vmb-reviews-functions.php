@@ -132,10 +132,28 @@ class Vmb_Reviews_Functions {
             
         } 
 
-
         header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=".$results['code']."&msg=".$results['message']."&resortID=".$resortID);
         exit;
 
+    }
+
+
+    public function check_review_updated($post_id, $post, $update) {
+        // Check if this is a revision
+        if (wp_is_post_revision($post_id)) {
+            return;
+        }
+    
+        // Check if the post type is 'vmb_reviews'
+        if ($post->post_type != 'vmb_reviews') {
+            return;
+        }
+    
+        // Check if the post is being updated
+        if ($update) {
+            // Add or update the post meta
+            update_post_meta($post_id, 'review_modified', true);
+        }
     }
 
 }
