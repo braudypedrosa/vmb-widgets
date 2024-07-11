@@ -46,8 +46,17 @@ jQuery(document).ready(function(){
 		let list = jQuery(this).find('.specials-list');
 
 		jQuery(this).find('.show-trigger').click(function(){
+			let href = jQuery(this).data('href');
+			let btn = jQuery(this);
+
 			list.slideDown('fast');
-			jQuery(this).removeClass('show-trigger').html('View All Specials');
+			btn.removeClass('show-trigger').html('View All Specials');
+			
+			setTimeout(function(){
+				btn.attr('href', href);
+			}, 1000);
+
+
 		});
 
 	})
