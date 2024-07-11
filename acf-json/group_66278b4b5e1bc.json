@@ -1,8 +1,21 @@
 {
     "key": "group_66278b4b5e1bc",
-    "title": "Toggle Display",
+    "title": "Reviews Toggles",
     "fields": [
         {
+            "key": "field_66278b4b6869a",
+            "label": "Hide from query?",
+            "name": "hide_from_query",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "allow_backendsearch": false,
             "show_column_filter": 0,
             "allow_bulkedit": 1,
@@ -10,12 +23,19 @@
             "show_column": 0,
             "show_column_weight": 1000,
             "show_column_sortable": false,
-            "key": "field_66278b4b6869a",
-            "label": "Hide from query?",
-            "name": "hide_from_query",
+            "message": "",
+            "default_value": 0,
+            "ui_on_text": "",
+            "ui_off_text": "",
+            "ui": 1
+        },
+        {
+            "key": "field_668fefdfbe68c",
+            "label": "Include in sync?",
+            "name": "include_in_sync",
             "aria-label": "",
             "type": "true_false",
-            "instructions": "",
+            "instructions": "By default, all untouched reviews will be included in the sync. \r\nThis option is only for reviews that were modified manually via the Wordpress Dashboard.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -42,7 +62,7 @@
             {
                 "param": "post_type",
                 "operator": "==",
-                "value": "vmb_specials"
+                "value": "post"
             }
         ]
     ],
@@ -55,6 +75,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "qef_simple_location_rules": 0,
-    "modified": 1713868133
+    "modified": 1720709187
 }

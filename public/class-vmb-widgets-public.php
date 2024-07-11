@@ -106,9 +106,7 @@ class Vmb_Widgets_Public {
 
 		wp_enqueue_script( $this->plugin_name .'_slick', 'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/vmb-widgets-public.js', array( 'jquery' ), $this->version, false );
-		
-		
-
+	
 	}
 
 }
