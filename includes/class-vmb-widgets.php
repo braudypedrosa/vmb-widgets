@@ -218,6 +218,7 @@ class Vmb_Widgets {
 		// reviews function hooks
 		$this->loader->add_action( 'admin_post_sync_vmb_reviews', $reviews_functions, 'sync_reviews');
 		$this->loader->add_action( 'admin_post_individual_sync_vmb_reviews', $reviews_functions, 'individual_sync_reviews');
+		$this->loader->add_action( 'save_post', $reviews_functions, 'check_review_updated', 10, 3);
 
 		// specials function hooks
 		$this->loader->add_action( 'admin_post_sync_vmb_specials', $specials_functions, 'sync_specials');

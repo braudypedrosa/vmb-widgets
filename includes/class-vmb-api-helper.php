@@ -109,10 +109,16 @@ class VMB_API_HELPER {
                             'post_status'=> 'publish'
                         ));
                     } else { // update logic here
-                        wp_update_post(array(
-                            'ID' => $post_id,
-                            'post_title' =>$firstname .' '. $lastname,
-                        ));
+
+                        if( get_post_meta( $post_id, 'review_modified', true) && get_field( 'include_in_sync', $post_id ) ) {
+                            wp_update_post(array(
+                                'ID' => $post_id,
+                                'post_title' => $firstname .' '. $lastname,
+                                'post_content' => $comment
+                            ));
+
+                            delete_post_meta($post_id, 'review_modified');
+                        }
                     }
     
                     update_post_meta($post_id, 'vmb_review_id', $uniqueID);
@@ -172,9 +178,10 @@ class VMB_API_HELPER {
                             'post_name' => $displayName .' - '. $connectedProperty
                         )); 
                     } else { // update logic here
+                        
                         wp_update_post(array(
                             'ID' => $post_id,
-                            'post_title' =>$displayName,
+                            'post_title' => $displayName,
                             'post_content'=> strip_tags($longDescription, ['p', 'a', 'img', 'strong']),
                             'post_name' => $displayName .' - '. $connectedProperty
                         ));
