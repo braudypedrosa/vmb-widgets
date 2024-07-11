@@ -1,15 +1,13 @@
-table {
+table#specialsTable {
   width: 100%;
   border-collapse: collapse;
 }
-
-th, td {
+table#specialsTable th, table#specialsTable td {
   border: 1px solid black;
   padding: 8px;
   text-align: left;
 }
-
-th {
+table#specialsTable th {
   background-color: #f2f2f2;
 }
 
@@ -50,4 +48,6 @@ th {
 .pagination button.active {
   background-color: #007bff;
   color: white;
-}/*# sourceMappingURL=vmb-widgets-specials-admin.css.map */
+}
+
+/*# sourceMappingURL=vmb-widgets-specials-admin.css.map */
