@@ -5,7 +5,6 @@ function display_vmb_reviews($atts) {
     global $post;
     $post_id = $post->ID;
     $output = '';
-    
 
     $atts = shortcode_atts(
 		array(
@@ -19,13 +18,15 @@ function display_vmb_reviews($atts) {
         return 'VMB Reviews post type is required to use this plugin!';
     }
 
-    if(get_post_type( $post_id ) != 'resort' && $atts['resort_id'] == '') {
+    if(get_post_type( $post_id ) != 'resort') {
         return 'Resort ID is required if used outside resort pages.';
-    } else {
-        $post_id = $atts['resort_id'];
-    }
+	}
+	
+	if( $atts['resort_id'] != '') {
+		$post_id = $atts['resort_id'];
+	}
 
-    $name = get_the_title( $atts['resort_id'] );
+    $name = get_the_title( $post_id );
 
     $reviews = get_posts(
         array(
@@ -35,14 +36,7 @@ function display_vmb_reviews($atts) {
             'meta_value' => $name
         )
     );
-
-    var_dump(array(
-        'numberposts' => $atts['limit'],
-        'post_type' => 'vmb_reviews',
-        'meta_key' => 'connected_property',
-        'meta_value' => $name
-    ));
-
+	
     
     foreach($reviews as $review) {
         $id = $review->ID;
