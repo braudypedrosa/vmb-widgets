@@ -139,10 +139,11 @@ function display_related_specials() {
     return '<h4 class="vmb-specials-list-heading">Related deals from '.$connected_property.'</h4><ul class="vmb-specials-list">'.$output.'</ul>';
 }
 
-function display_special($atts) {
+function display_special_shortcode($atts) {
     $atts = shortcode_atts(
         array(
             'id' => '',
+            'property' => '',
         ),
         $atts,
         'display_special'
@@ -153,8 +154,37 @@ function display_special($atts) {
 
     $output = '';
 
+    if (!empty($atts['id']) && !empty($specials)) {
+        if (empty($atts['property'])) {
+            return 'The property attribute is required.';
+        }
+
+        foreach ($specials as $special) {
+            if ($special['id'] == $atts['id']) {
+                if (isset($special[$atts['property']])) {
+                    $output = $special[$atts['property']];
+                } else {
+                    $output = 'Attribute not found.';
+                }
+                break;
+            }
+        }
+
+        if (empty($output)) {
+            $output = 'Special not found.';
+        }
+    } else {
+        $output = 'No specials available or ID not provided.';
+    }
+
     return $output;
 }
+
+add_shortcode('display_special', 'display_special_shortcode');
+
+
+add_shortcode('display_special', 'display_special_shortcode');
+
 
 function test_shortcode_func() {
 
