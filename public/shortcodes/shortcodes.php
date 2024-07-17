@@ -144,58 +144,6 @@ function display_related_specials() {
 
 add_shortcode('related_specials', 'display_related_specials');
 
-function display_specials_preview($atts) {
-
-    $atts = shortcode_atts(
-		array(
-			'resort_id' => '',
-            'limit' => 4,
-		), $atts, 
-    'specials_preview' );
-
-
-    if(!isset($atts['resort_id'])) {
-        return 'Resort ID is required if used outside resort pages.';
-    }
-
-
-    
-    $connected_property = get_the_title($atts['resort_id']);
-    $output = '';
-
-    $specials = get_posts(
-        array(
-            'numberposts' => $atts['limit'],
-            'post_type' => 'vmb_specials',
-            'meta_key' => 'connected_property',
-            'meta_value' => $connected_property,
-        )
-    );
-
-
-    if(count($specials) >= 1) {
-        
-        $output .= '<div data-connected_property="'.$connected_property.'" id="resort-'.$atts['resort_id'].'" class="specials-preview"><ul style="display: none;" class="specials-list">';
-
-        foreach($specials as $special) {
-            $id = $special->ID;
-            $name = $special->post_title;
-            $permalink = get_the_permalink($id);
-            $reservationURL = get_the_permalink($atts['resort_id']) . '#specials';
-            
-
-            $output .= '<li class="special-preview" id="sp-'.$id.'">
-                    <a href="'.$permalink.'">'.$name.'</a>
-                </li>';
-        }
-
-        $output .= '</ul><a class="preview-btn show-trigger" data-href="'.$reservationURL.'">View Specials</a></div>';
-
-    }
-
-    return $output;
-}
-
 
 function display_special($atts) {
     $atts = shortcode_atts(
