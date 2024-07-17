@@ -1,5 +1,10 @@
 <?php 
 
+add_shortcode('vmb_reviews', 'display_vmb_reviews');
+add_shortcode('vmb_specials', 'display_vmb_specials');
+add_shortcode('related_specials', 'display_related_specials');
+add_shortcode('display_special', 'display_special_shortcode');
+
 function display_vmb_reviews($atts) {
 
     global $post;
@@ -64,13 +69,7 @@ function display_vmb_reviews($atts) {
 
     return '<div class="vmb-widget vmb-reviews">'.$output.'</div>';
 
-    
-    // pretty_print_array($reviews);
-
 }
-
-add_shortcode('vmb_reviews', 'display_vmb_reviews');
-
 
 function display_vmb_specials($atts) {
 
@@ -115,8 +114,6 @@ function display_vmb_specials($atts) {
 
 }
 
-add_shortcode('vmb_specials', 'display_vmb_specials');
-
 function display_related_specials() {
     global $post;
     $post_id = $post->ID;
@@ -142,9 +139,6 @@ function display_related_specials() {
     return '<h4 class="vmb-specials-list-heading">Related deals from '.$connected_property.'</h4><ul class="vmb-specials-list">'.$output.'</ul>';
 }
 
-add_shortcode('related_specials', 'display_related_specials');
-
-
 function display_special($atts) {
     $atts = shortcode_atts(
         array(
@@ -161,10 +155,6 @@ function display_special($atts) {
 
     return $output;
 }
-add_shortcode('display_special', 'display_special_shortcode');
-
-
-add_shortcode('specials_preview', 'display_specials_preview');
 
 function test_shortcode_func() {
 
