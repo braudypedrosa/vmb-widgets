@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "The Caravelle Resort"
     ];
 
-    function addRowToTable(specialId, resortId, resort, specialName, specialDescription, expiration, isDisabled) {
+    function addRowToTable(special) {
         var table = document.getElementById('specialsTable').getElementsByTagName('tbody')[0];
         var newRow = table.insertRow();
         var cell0 = newRow.insertCell(0); // Hidden cell for resortId
@@ -34,20 +34,23 @@ document.addEventListener('DOMContentLoaded', function() {
         var cell5 = newRow.insertCell(5);
         var cell6 = newRow.insertCell(6);
 
-        cell0.innerHTML = resortId;
+        cell0.innerHTML = special.resort_id;
         cell0.style.display = 'none'; // Hide this cell
-        cell1.innerHTML = specialId;
-        cell2.innerHTML = resort;
-        cell3.innerHTML = specialName;
-        cell4.innerHTML = specialDescription;
-        cell5.innerHTML = formatDate(expiration);
+        cell1.innerHTML = special.id;
+        cell2.innerHTML = special.resort;
+        cell3.innerHTML = special.name;
+        cell4.innerHTML = special.description;
+        cell5.innerHTML = formatDate(special.expiration);
         cell6.innerHTML = '<button class="edit-btn">Edit</button> <button class="disable-btn">Disable</button>';
 
         cell1.classList.add('readonly');
         cell2.classList.add('readonly');
         cell5.classList.add('readonly');
 
+        var isDisabled = special.disabled !== undefined ? special.disabled : false;
         newRow.setAttribute('data-disabled', isDisabled);
+        newRow.setAttribute('data-special-meta', JSON.stringify(special)); // Store data as JSON string
+
         if (isDisabled) {
             newRow.classList.add('disabled');
         }
@@ -98,6 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var editable = row.classList.contains('edit-mode');
         if (editable) {
             // Save data
+            row.setAttribute('data-modified', true); // Mark as modified
             updateSpecialData(row);
             makeEditable(row, false);
         } else {
@@ -114,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var specialDescription = cells[4].textContent;
         var expiration = new Date(cells[5].textContent).toISOString();
         var isDisabled = row.getAttribute('data-disabled') === 'true';
+        var isModified = row.getAttribute('data-modified') === 'true';
 
         for (var i = 0; i < allSpecials.length; i++) {
             if (allSpecials[i].id == specialId) {
@@ -122,9 +127,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 allSpecials[i].description = specialDescription;
                 allSpecials[i].expiration = expiration;
                 allSpecials[i].disabled = isDisabled;
+                allSpecials[i].modified = isModified; // Update modified status
                 break;
             }
         }
+
+        row.setAttribute('data-special-meta', JSON.stringify({
+            id: specialId,
+            resort_id: resortId,
+            resort: cells[2].textContent,
+            name: specialName,
+            description: specialDescription,
+            expiration: expiration,
+            disabled: isDisabled,
+            modified: isModified
+        }));
     }
 
     function loadJsonData(jsonData) {
@@ -142,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var paginatedSpecials = specials.slice(start, end);
 
         for (var i = 0; i < paginatedSpecials.length; i++) {
-            addRowToTable(paginatedSpecials[i].id, paginatedSpecials[i].resort_id, paginatedSpecials[i].resort, paginatedSpecials[i].name, paginatedSpecials[i].description, paginatedSpecials[i].expiration, paginatedSpecials[i].disabled);
+            addRowToTable(paginatedSpecials[i]);
         }
     }
 
@@ -180,7 +197,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 name: special.name,
                 description: special.description,
                 expiration: special.expiration,
-                disabled: special.disabled
+                disabled: special.disabled,
+                modified: special.modified // Include modified status
             };
         });
 
@@ -248,13 +266,6 @@ document.addEventListener('DOMContentLoaded', function() {
             event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
         }
     });
-
-    var dummyJson = JSON.stringify([
-        { "id": "1", "resort_id": "101", "resort": "Resort A", "name": "Special One", "description": "Description for Special One", "expiration": "2024-06-14T00:00:00Z", "disabled": false },
-        { "id": "2", "resort_id": "102", "resort": "Resort B", "name": "Special Two", "description": "Description for Special Two", "expiration": "2024-06-14T00:00:00Z", "disabled": false },
-        { "id": "3", "resort_id": "103", "resort": "Resort C", "name": "Special Three", "description": "Description for Special Three", "expiration": "2024-06-14T00:00:00Z", "disabled": false },
-        // Add more rows as needed for testing pagination
-    ]);
 
     loadJsonData(vmb_ajax.cached_specials);
 

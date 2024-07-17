@@ -100,91 +100,101 @@ class Vmb_Specials_Functions {
         $api_helper = new VMB_API_HELPER();
         $vmb_settings = json_decode(get_option('vmb_settings'));
         $synced = (get_option('vmb_api_specials_synced') != '') ? get_option('vmb_api_specials_synced') : false;
-
+    
         $endpoint = 'https://external.guestdesk.com/partner/v1/System/Packages';
-
+        $message = '';
+    
         $resorts = get_posts([
             'post_type' => 'resort',
             'post_status' => 'publish',
             'numberposts' => -1
         ]);
-
-        $auth = base64_encode($vmb_settings->guestdesk_username.':'.$vmb_settings->guestdesk_password);
-
+    
+        $auth = base64_encode($vmb_settings->guestdesk_username . ':' . $vmb_settings->guestdesk_password);
+    
         $headers = array(
-            'Authorization: Basic '.$auth,
+            'Authorization: Basic ' . $auth,
             'Content-Type: application/json',
             'Accept: application/json'
         );
-
+    
         $sanitizedArray = array();
-
-        if(!$synced) {
-            foreach($resorts as $resort) {
+        $existingSpecials = json_decode(get_option('vmb_api_cached_specials'), true) ?: [];
+        $newSpecialsIDs = array();
+    
+        if (!$synced) {
+            foreach ($resorts as $resort) {
                 $siteName = get_field('site_name', $resort->ID);
                 $resortID = $resort->ID;
                 $resortName = get_the_title($resort->ID);
-                
+    
                 $params = array(
                     "language" => "",
                     "requestId" => "",
                     "requestTime" => gmdate('Y-m-d\TH:i:s.v\Z'),
                     "sites" => array(
-                        array(
-                            'siteName' => $siteName
-                        )
+                        array('siteName' => $siteName)
                     )
                 );
     
                 $results = $api_helper->GuestDeskApiRequest($endpoint, 'POST', $params, $headers);
     
-                if($results['code'] == 'success') {
-                    $response = $results['response'][$siteName];
-                } else {
+                if ($results['code'] !== 'success') {
+                    $message = 'Sync error!';
                     $api_helper->displayResponseMessage(['code' => 'fail', 'message' => 'API error!', 'response' => null]);
+                    continue; // Skip to the next resort if there's an API error
+                } else {
+                    $message = "Specials synced successfully!";
                 }
     
-                if(!empty($response)) {
+                $response = $results['response'][$siteName] ?? [];
     
-                    foreach($response['Packages'] as $package) {
+                foreach ($response['Packages'] as $package) {
+                    $packageID = $package['PackageId'];
+                    $newSpecialsIDs[] = $packageID;
     
-                        $packageID = $package['PackageId'];
-                        $connectedProperty = $resortName;
+                    $active = $package['Active'];
+                    $promote = $package['Promote'];
+                    $bookable = $package['Bookable'];
     
-                        $active = $package['Active'];
-                        $promote = $package['Promote'];
-                        $bookable = $package['Bookable'];
+                    if ($active && $bookable && $promote) {
+                        $sanitized = array(
+                            'id' => $packageID,
+                            'resort_id' => $resortID,
+                            'resort' => $resortName,
+                            'name' => $package['PackageDisplayName'],
+                            'description' => $package['PackageShortDescription'],
+                            'expiration' => $package['CalendarEndDate'],
+                            'modified' => false
+                        );
     
-                        $startDate = $package['CalendarStartDate'];
-                        $endDate = $package['CalendarEndDate'];
-                        $displayName = $package['PackageDisplayName'];
-                        $shortDescription = $package['PackageShortDescription'];
-            
-                        if($active && $bookable && $promote) {
-                            $sanitized = array(
-                                'id' => $packageID,
-                                'resort_id' => $resortID,
-                                'resort' => $connectedProperty,
-                                'name' => $displayName,
-                                'description' => $shortDescription,
-                                'expiration' => $endDate
-                            );
-            
-                            array_push($sanitizedArray, $sanitized);
+                        // Check if this special exists in the current cache and if it's marked as modified
+                        $existingSpecialKey = array_search($packageID, array_column($existingSpecials, 'id'));
+    
+                        if ($existingSpecialKey === false || !isset($existingSpecials[$existingSpecialKey]['modified']) || !$existingSpecials[$existingSpecialKey]['modified']) {
+                            $sanitizedArray[] = $sanitized;
+                        } else {
+                            // Keep the existing special if it's modified
+                            $sanitizedArray[] = $existingSpecials[$existingSpecialKey];
                         }
-    
                     }
-    
                 }
             }
+    
+            // Filter the sanitized array to remove specials not in the new specials IDs
+            $sanitizedArray = array_filter($sanitizedArray, function ($special) use ($newSpecialsIDs) {
+                return in_array($special['id'], $newSpecialsIDs);
+            });
+    
+            // Update the option with the combined array
+            update_option('vmb_api_cached_specials', json_encode(array_values($sanitizedArray))); // Ensure array is reindexed
+            update_option('vmb_api_specials_synced', true);
         }
-
-        update_option('vmb_api_cached_specials', json_encode($sanitizedArray));
-        update_option('vmb_api_specials_synced', true);
-
-        header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=".$results['code']."&msg=".(get_option('vmb_api_specials_synced', true) === null));
+    
+        header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=" . $results['code'] . "&msg=" . $message );
         exit;
-
     }
+    
+    
 
 }
