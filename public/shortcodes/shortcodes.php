@@ -87,26 +87,28 @@ function display_vmb_specials($atts) {
         
         foreach($specials as $special) {
            
-            $packageID = $special['id'];
-            $name = $special['name'];
-            $reservationURL = get_field('reservation_url', $special['resort_id']);
-            
-            $description = $special['description'];
-            $expiration = $special['expiration'];
-    
-    
-            $output .= '<div class="vmb-special" id="special-'.$packageID.'">
-                            <img src="'.plugin_dir_url(__DIR__).'/assets/specials-icon.png">
-                            <div class="special-details">
-                                <h3 class="package-name">'.$name.'</h3>
-                                <p class="description">'.$description.'</p>
-                                <div class="validity">
-                                    <span>Valid:</span>
-                                    <span>'.date('n/j/Y').' - '.date_format(date_create($expiration), 'n/j/Y').'</span>
-                                </div>
-                                <a class="theme-button" href="'.$reservationURL.'?packageId='.$packageID.'" tabindex="0">Book Now</a>
-                            </div>
-                        </div>';
+            if( !$special['disabled'] ) {
+				$packageID = $special['id'];
+				$name = $special['name'];
+				$reservationURL = get_field('reservation_url', $special['resort_id']);
+
+				$description = $special['description'];
+				$expiration = $special['expiration'];
+
+
+				$output .= '<div class="vmb-special" id="special-'.$packageID.'">
+								<img src="'.plugin_dir_url(__DIR__).'/assets/specials-icon.png">
+								<div class="special-details">
+									<h3 class="package-name">'.$name.'</h3>
+									<p class="description">'.$description.'</p>
+									<div class="validity">
+										<span>Valid:</span>
+										<span>'.date('n/j/Y').' - '.date_format(date_create($expiration), 'n/j/Y').'</span>
+									</div>
+									<a class="theme-button" href="'.$reservationURL.'?packageId='.$packageID.'" tabindex="0">Book Now</a>
+								</div>
+							</div>';
+			}
         }
     
         // pretty_print_array($specials);
