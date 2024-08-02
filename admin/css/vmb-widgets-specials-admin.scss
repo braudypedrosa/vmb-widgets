@@ -1,45 +1,66 @@
-table#specialsTable {
+.dataTables_wrapper .dataTables_length {
+    float: left;
+    text-align: left;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
+}
+
+.dataTables_wrapper .dataTables_info {
+    float: left;
+    text-align: left;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    float: right;
+    text-align: right;
+}
+
+
+.vmb-widgets-container {
+    .dt-container {
+        div.dt-layout-row {
+    
+            .dt-layout-start, .dt-layout-end .dt-search {
+                display: flex!important;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .dt-layout-start, .dt-layout-end {
+                flex: 1;
+                margin-left: 0!important;
+                margin-right: 0!important;
+            }
+        }
+    }
+}
+
+.modal .form-control {
+    max-width: 100%!important;
+}
+
+
+#specialsCategory {
+    table-layout: fixed;
     width: 100%;
-    border-collapse: collapse;
 
     th, td {
-        border: 1px solid black;
-        padding: 8px;
-        text-align: left;
+        word-wrap: break-word;
     }
-    th { 
-        background-color: #f2f2f2;
-    }
-} 
 
-.editable {
-    cursor: pointer;
+    th:nth-child(1), td:nth-child(1) {
+        width: 40%;
+    }
+
+    th:nth-child(2), td:nth-child(2) {
+        width: 40%;
+    }
+
+    th:nth-child(3), td:nth-child(3) {
+        width: 20%;
+    }
 }
-.edit-mode {
-    background-color: #ffffe0; /* Light yellow color */
-}
-.readonly {
-    color: #aaa;
-}
-.disabled {
-    background-color: #e0e0e0;
-    color: #999;
-}
-#specialsTable {
-    margin-top: 10px;
-}
-.pagination {
-    margin-top: 10px;
-    text-align: center;
-}
-.pagination button {
-    margin: 0 2px;
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    background-color: #f2f2f2;
-    cursor: pointer;
-}
-.pagination button.active {
-    background-color: #007bff;
-    color: white;
-}
+

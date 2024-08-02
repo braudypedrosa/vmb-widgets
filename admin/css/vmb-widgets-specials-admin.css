@@ -1,53 +1,53 @@
-table#specialsTable {
-  width: 100%;
-  border-collapse: collapse;
-}
-table#specialsTable th, table#specialsTable td {
-  border: 1px solid black;
-  padding: 8px;
+.dataTables_wrapper .dataTables_length {
+  float: left;
   text-align: left;
 }
-table#specialsTable th {
-  background-color: #f2f2f2;
+
+.dataTables_wrapper .dataTables_filter {
+  float: right;
+  text-align: right;
 }
 
-.editable {
-  cursor: pointer;
+.dataTables_wrapper .dataTables_info {
+  float: left;
+  text-align: left;
 }
 
-.edit-mode {
-  background-color: #ffffe0; /* Light yellow color */
+.dataTables_wrapper .dataTables_paginate {
+  float: right;
+  text-align: right;
 }
 
-.readonly {
-  color: #aaa;
+.vmb-widgets-container .dt-container div.dt-layout-row .dt-layout-start, .vmb-widgets-container .dt-container div.dt-layout-row .dt-layout-end .dt-search {
+  display: flex !important;
+  gap: 10px;
+  align-items: center;
+}
+.vmb-widgets-container .dt-container div.dt-layout-row .dt-layout-start, .vmb-widgets-container .dt-container div.dt-layout-row .dt-layout-end {
+  flex: 1;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
-.disabled {
-  background-color: #e0e0e0;
-  color: #999;
+.modal .form-control {
+  max-width: 100% !important;
 }
 
-#specialsTable {
-  margin-top: 10px;
+#specialsCategory {
+  table-layout: fixed;
+  width: 100%;
 }
-
-.pagination {
-  margin-top: 10px;
-  text-align: center;
+#specialsCategory th, #specialsCategory td {
+  word-wrap: break-word;
 }
-
-.pagination button {
-  margin: 0 2px;
-  padding: 5px 10px;
-  border: 1px solid #ccc;
-  background-color: #f2f2f2;
-  cursor: pointer;
+#specialsCategory th:nth-child(1), #specialsCategory td:nth-child(1) {
+  width: 40%;
 }
-
-.pagination button.active {
-  background-color: #007bff;
-  color: white;
+#specialsCategory th:nth-child(2), #specialsCategory td:nth-child(2) {
+  width: 40%;
+}
+#specialsCategory th:nth-child(3), #specialsCategory td:nth-child(3) {
+  width: 20%;
 }
 
 /*# sourceMappingURL=vmb-widgets-specials-admin.css.map */

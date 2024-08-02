@@ -70,6 +70,18 @@ class Vmb_Widgets_Admin {
 		// Add submenu page
 		add_submenu_page(
 			'vmb_settings', 
+			__( 'Manage Categories', 'textdomain' ),
+			'Manage Categories', 
+			'manage_options', 
+			'manage_categories', 
+			function() {
+				include_once(plugin_dir_path(dirname(__FILE__)) . 'admin/partials/vmb-widgets-specials-category-admin-display.php');
+			}
+		);
+
+		// Add submenu page
+		add_submenu_page(
+			'vmb_settings', 
 			__( 'Manage Specials', 'textdomain' ),
 			'Manage Specials', 
 			'manage_options', 
@@ -403,7 +415,12 @@ class Vmb_Widgets_Admin {
 
 		wp_enqueue_style( $this->plugin_name . '_specials', plugin_dir_url( __FILE__ ) . 'css/vmb-widgets-specials-admin.css', array(), $this->version, 'all' );
 		
+		// Data tables
+		wp_enqueue_style( $this->plugin_name .'_datatables', 'https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.min.css');
 
+		// Bootstrap
+		wp_enqueue_style( $this->plugin_name .'_bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css');
+		
 	}
 
 	/**
@@ -425,6 +442,12 @@ class Vmb_Widgets_Admin {
 		 * class.
 		 */
 
+		// Data tables
+		wp_enqueue_script( $this->plugin_name .'_datatables', 'https://cdn.datatables.net/2.1.3/js/dataTables.min.js', array( 'jquery' ), $this->version, false );
+
+		// Bootstrap
+		wp_enqueue_script( $this->plugin_name .'_bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js', array( 'jquery' ), $this->version, false );
+
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/vmb-widgets-admin.js', array( 'jquery' ), $this->version, false );
 
 		wp_enqueue_script( $this->plugin_name . '_sweetalert', 'https://cdn.jsdelivr.net/npm/sweetalert2@11', null, $this->version, false );
@@ -432,11 +455,13 @@ class Vmb_Widgets_Admin {
 		wp_enqueue_script( $this->plugin_name . '_specials', plugin_dir_url( __FILE__ ) . 'js/vmb-widgets-specials-admin.js', array( 'jquery' ), $this->version, false );
 
 		$cached_specials = get_option('vmb_api_cached_specials', true);
+		$cached_specials_category = get_option('vmb_specials_category', true);
 		$api_synced = get_option('vmb_api_specials_synced', true);
 
 		wp_localize_script( $this->plugin_name . '_specials', 'vmb_ajax',  
 			array(
 				'cached_specials' => $cached_specials,
+				'cached_special_categories' => $cached_specials_category,
 				'ajax_url' => admin_url('admin-ajax.php'),
         		'nonce' => wp_create_nonce('specials_nonce')
 			)
@@ -445,17 +470,92 @@ class Vmb_Widgets_Admin {
 	}
 
 	function save_table() {
-		check_ajax_referer('specials_nonce', 'security');
-
 		$jsonString = isset($_POST['jsonData']) ? $_POST['jsonData'] : '';
     
 		// Remove backslashes
 		$cleanedJsonString = stripslashes($jsonString);
 
+		error_log( 'Table Data: ' . $cleanedJsonString );
+
 		update_option('vmb_api_cached_specials', $cleanedJsonString);
 		update_option('vmb_api_specials_synced', false);
 	
 		wp_send_json_success(array('message' => 'Specials stored in cache!'));
+	}
+
+	function get_specials_meta() {
+		if(!isset($_POST['option'])) {
+			wp_send_json_error('Option not found');
+		}
+		
+		$option = $_POST['option'];
+
+		$data = get_option($option, '[]');
+    	wp_send_json_success(json_decode($data));
+	}
+
+	function save_specials_meta() {
+		if (!isset($_POST['data']) || !isset($_POST['option'])) {
+			wp_send_json_error('No categories provided');
+		}
+		
+		$option = $_POST['option'];
+		$categories = sanitize_text_field(stripcslashes($_POST['data']));
+
+		update_option($option, $categories);
+		wp_send_json_success();
+	}
+
+	function delete_specials_category() {
+		if (!isset($_POST['index'])) {
+			wp_send_json_error('No index provided');
+		}
+	
+		$index = intval($_POST['index']);
+		$categories = get_option('vmb_specials_category', '[]');
+		$categories = json_decode($categories, true);
+	
+		if (!isset($categories[$index])) {
+			wp_send_json_error('Index out of bounds');
+		}
+	
+		array_splice($categories, $index, 1);
+		update_option('vmb_specials_category', json_encode($categories));
+		wp_send_json_success();
+	}
+
+
+	// register custom endpoints
+	function register_special_endpoints() {
+
+		$json_data = get_option('vmb_specials_category', '[]');
+    	$categories = json_decode($json_data, true);
+
+		foreach ($categories as $category) {
+			add_rewrite_rule(
+				'^specialcode/' . $category['slug'] . '/?$',
+				'index.php?specialcode=' . $category['name'],
+				'top'
+			);
+		}
+	}
+
+	function add_specialcode_query_var($vars) {
+		$vars[] = 'specialcode';
+		return $vars;
+	}
+
+	function load_specialcode_template($template) {
+		$specialcode = get_query_var('specialcode');
+		if ($specialcode) {
+			$plugin_template = plugin_dir_path(__FILE__) . 'partials/custom/specialcode-template.php';
+
+			error_log('specialcode template: ' . $plugin_template );
+			if (file_exists($plugin_template)) {
+				return $plugin_template;
+			}
+		}
+		return $template;
 	}
 
 }
