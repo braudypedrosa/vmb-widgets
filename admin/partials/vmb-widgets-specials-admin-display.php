@@ -55,8 +55,15 @@
                         <label for="specialCategory" class="form-label">Category:</label>
                         <select class="form-control dt-input" id="specialCategory"></select>
                     </div>
+  
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="specialDisable">
+                        <label class="form-check-label" for="specialDisable">
+                            Disable?
+                        </label>
+                    </div>
                     <input type="hidden" id="editSpecialIndex">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
                 </form>
             </div>
         </div>
@@ -76,6 +83,7 @@
         const name = document.getElementById('specialName').value;
         const description = document.getElementById('specialDescription').value;
         const category = document.getElementById('specialCategory').value;
+        const disable = document.getElementById('specialDisable').checked;
         const editSpecialIndex = document.getElementById('editSpecialIndex').value;
 
         const table = document.getElementById('specialsTable').getElementsByTagName('tbody')[0];
@@ -84,6 +92,8 @@
             // Add new special
             const newRow = table.insertRow();
             newRow.setAttribute('data-modified', 'false'); // Add modified attribute
+            newRow.setAttribute('data-disable', disable); // Add disable attribute
+
             const nameCell = newRow.insertCell(2);
             const descriptionCell = newRow.insertCell(3);
             const categoryCell = newRow.insertCell(5);
@@ -94,6 +104,9 @@
             categoryCell.innerHTML = category;
             actionCell.innerHTML = `
                 <button class="btn btn-sm btn-warning" onclick="editSpecial(${table.rows.length - 1})">Edit</button>
+                <button class="btn btn-sm ${disable ? 'btn-danger' : 'btn-secondary'}" onclick="toggleDisableSpecial(${table.rows.length - 1}, this)">
+                    ${disable ? 'Disabled' : 'Disable'}
+                </button>
             `;
         } else {
             // Update existing special
@@ -103,6 +116,12 @@
             row.cells[3].textContent = description;
             row.cells[5].textContent = category;
             row.setAttribute('data-modified', 'true'); // Mark row as modified
+            row.setAttribute('data-disable', disable); // Mark row as disabled
+
+
+            const disableButton = row.cells[6].querySelector('button.btn-sm.btn-danger, button.btn-sm.btn-secondary'); 
+            disableButton.className = `btn btn-sm ${disable ? 'btn-danger' : 'btn-secondary'}`; 
+            disableButton.textContent = disable ? 'Disabled' : 'Disable'; 
 
             // Redraw the table to reflect the changes
             dataTable.draw();
@@ -122,6 +141,7 @@
                 description: row.cells[3].textContent,
                 expiration: row.cells[4].textContent,
                 category: row.cells[5].textContent,
+                disable: row.getAttribute('data-disable') === 'true', // Include disable attribute
                 modified: row.getAttribute('data-modified') === 'true' // Include modified attribute
             });
         }
@@ -145,7 +165,7 @@
         fetchCategories().done(function(response) {
             if (response.success) {
                 const categories = response.data;
-                generateTable(specials, categories);
+                generateSpecialsTable(specials, categories);
 
                 const dataTable = jQuery('#specialsTable').DataTable({
                     "pageLength": 20,

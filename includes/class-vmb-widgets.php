@@ -192,6 +192,9 @@ class Vmb_Widgets {
 		$this->loader->add_action( 'init', $plugin_admin, 'register_vmb_post_types' );
 		$this->loader->add_action( 'init', $plugin_admin, 'register_vmb_taxonomy' );
 
+		$this->loader->add_action('init', $plugin_admin, 'conditionally_flush_rewrite_rules');
+		
+
 
 		// initialize ajax functions
 		$this->loader->add_action('wp_ajax_save_table', $plugin_admin, 'save_table');

@@ -64,3 +64,24 @@
     }
 }
 
+.form-check-input:checked {
+    background-color: white!important;
+}
+
+.form-check {
+    display: flex!important;
+    min-height: unset!important;
+    align-items: center;
+    gap: 5px;
+    line-height: 2em;
+
+    label.form-check-label {
+        line-height: 1em;
+    }
+}
+
+td.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

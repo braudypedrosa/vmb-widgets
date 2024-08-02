@@ -4,7 +4,7 @@
 
 
         <!-- Button to open modal -->
-        <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#entryModal" onclick="resetForm()">
+        <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#entryModal" onclick="resetCategoryForm()">
             Add New Category
         </button>
         
@@ -32,6 +32,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+
+                <!-- Error message container -->
+                <div id="entryModalError" class="alert alert-danger" style="display: none;"></div>
+
+    
                 <form id="entryForm">
                     <div class="mb-3">
                         <label for="name" class="form-label">Name:</label>
@@ -59,6 +64,11 @@ document.getElementById('name').addEventListener('input', function() {
     document.getElementById('slug').value = slug;
 });
 
+// Hide error message when the modal is opened
+jQuery('#entryModal').on('show.bs.modal', function () {
+    jQuery('#entryModalError').hide();
+});
+
 // JavaScript to handle form submission and add/update row to the table
 document.getElementById('entryForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the form from submitting the traditional way
@@ -70,33 +80,12 @@ document.getElementById('entryForm').addEventListener('submit', function(event) 
 
     // Validate the slug
     if (!validateSlug(slug)) {
-        alert('Invalid slug. Please enter a valid slug (lowercase letters, numbers, and hyphens only).');
+        jQuery('#entryModalError').text('Invalid slug. Please enter a valid slug (lowercase letters, numbers, and hyphens only).').show();
         return; // Stop the form submission
     }
 
-    const table = document.getElementById('specialsCategory').getElementsByTagName('tbody')[0];
-
-    if (editIndex === '') {
-        // Add new category
-        const newRow = table.insertRow();
-        const nameCell = newRow.insertCell(0);
-        const slugCell = newRow.insertCell(1);
-        const actionCell = newRow.insertCell(2);
-
-        nameCell.textContent = name;
-        slugCell.textContent = slug;
-        actionCell.innerHTML = `
-            <button class="btn btn-sm btn-warning" onclick="editEntry(this)">Edit</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteEntry(this)">Delete</button>
-        `;
-    } else {
-        // Update existing category
-        const row = table.rows[editIndex];
-        row.cells[0].textContent = name;
-        row.cells[1].textContent = slug;
-    }
-
     // Save the updated categories
+    const table = document.getElementById('specialsCategory').getElementsByTagName('tbody')[0];
     const categories = [];
     for (let i = 0; i < table.rows.length; i++) {
         const row = table.rows[i];
@@ -105,15 +94,14 @@ document.getElementById('entryForm').addEventListener('submit', function(event) 
             slug: row.cells[1].textContent
         });
     }
-    saveCategories(categories);
 
-    // Clear the form fields
-    document.getElementById('entryForm').reset();
+    if (editIndex === '') {
+        categories.push({ name: name, slug: slug }); // Add new category to categories array
+    } else {
+        categories[editIndex] = { name: name, slug: slug }; // Update existing category in categories array
+    }
 
-    // Hide the modal
-    var entryModalElement = document.getElementById('entryModal');
-    var entryModal = bootstrap.Modal.getInstance(entryModalElement);
-    entryModal.hide();
+    saveCategories(categories, name, slug, editIndex); // Pass additional parameters to saveCategories
 });
 
 // Load categories on page load

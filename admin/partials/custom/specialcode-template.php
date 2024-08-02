@@ -1,6 +1,11 @@
 <?php
 /* Template Name: Special Code Template */
 
+// Hide deprecated notices
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
+@ini_set('display_errors', 0);
+
+
 get_header();
 
 $specialcode = get_query_var('specialcode');

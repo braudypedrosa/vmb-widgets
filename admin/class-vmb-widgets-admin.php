@@ -390,85 +390,6 @@ class Vmb_Widgets_Admin {
 		}
 	}
 
-
-	/**
-	 * Register the stylesheets for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Vmb_Widgets_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Vmb_Widgets_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_style( $this->plugin_name . '_normalize', plugin_dir_url( __FILE__ ) . 'css/normalize.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/vmb-widgets-admin.css', array(), $this->version, 'all' );
-
-		wp_enqueue_style( $this->plugin_name . '_specials', plugin_dir_url( __FILE__ ) . 'css/vmb-widgets-specials-admin.css', array(), $this->version, 'all' );
-		
-		// Data tables
-		wp_enqueue_style( $this->plugin_name .'_datatables', 'https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.min.css');
-
-		// Bootstrap
-		wp_enqueue_style( $this->plugin_name .'_bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css');
-		
-	}
-
-	/**
-	 * Register the JavaScript for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Vmb_Widgets_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Vmb_Widgets_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		// Data tables
-		wp_enqueue_script( $this->plugin_name .'_datatables', 'https://cdn.datatables.net/2.1.3/js/dataTables.min.js', array( 'jquery' ), $this->version, false );
-
-		// Bootstrap
-		wp_enqueue_script( $this->plugin_name .'_bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js', array( 'jquery' ), $this->version, false );
-
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/vmb-widgets-admin.js', array( 'jquery' ), $this->version, false );
-
-		wp_enqueue_script( $this->plugin_name . '_sweetalert', 'https://cdn.jsdelivr.net/npm/sweetalert2@11', null, $this->version, false );
-		
-		wp_enqueue_script( $this->plugin_name . '_specials', plugin_dir_url( __FILE__ ) . 'js/vmb-widgets-specials-admin.js', array( 'jquery' ), $this->version, false );
-
-		$cached_specials = get_option('vmb_api_cached_specials', true);
-		$cached_specials_category = get_option('vmb_specials_category', true);
-		$api_synced = get_option('vmb_api_specials_synced', true);
-
-		wp_localize_script( $this->plugin_name . '_specials', 'vmb_ajax',  
-			array(
-				'cached_specials' => $cached_specials,
-				'cached_special_categories' => $cached_specials_category,
-				'ajax_url' => admin_url('admin-ajax.php'),
-        		'nonce' => wp_create_nonce('specials_nonce')
-			)
-		);
-
-	}
-
 	function save_table() {
 		$jsonString = isset($_POST['jsonData']) ? $_POST['jsonData'] : '';
     
@@ -495,15 +416,49 @@ class Vmb_Widgets_Admin {
 	}
 
 	function save_specials_meta() {
-		if (!isset($_POST['data']) || !isset($_POST['option'])) {
-			wp_send_json_error('No categories provided');
+		if (!current_user_can('manage_options')) {
+			wp_send_json_error();
 		}
-		
-		$option = $_POST['option'];
-		$categories = sanitize_text_field(stripcslashes($_POST['data']));
-
-		update_option($option, $categories);
-		wp_send_json_success();
+	
+		$categories = json_decode(stripslashes($_POST['data']), true);
+		$option = sanitize_text_field($_POST['option']);
+	
+		// Get the existing categories
+		$existing_categories = get_option($option, array());
+	
+		// Ensure $existing_categories is always an array
+		if (!is_array($existing_categories)) {
+			$existing_categories = array();
+		}
+	
+		// Validate categories and check for duplicates
+		$slugs = array_map(function($category) {
+			return $category['slug'];
+		}, $existing_categories);
+	
+		foreach ($categories as $category) {
+			if (empty($category['name']) || empty($category['slug'])) {
+				wp_send_json_error(array('message' => 'Category name and slug are required.'));
+			}
+	
+			if (in_array($category['slug'], $slugs)) {
+				wp_send_json_error(array('message' => 'Duplicate category found: ' . $category['slug']));
+			}
+	
+			// Add the new slug to the array for checking against subsequent categories
+			$slugs[] = $category['slug'];
+		}
+	
+		// Merge the existing categories with the new ones
+		$updated_categories = array_merge($existing_categories, $categories);
+	
+		if (update_option($option, json_encode($updated_categories))) {
+			// Set a transient to indicate that rewrite rules need to be flushed
+			set_transient('flush_rewrite_rules_needed', true, 60); // Valid for 1 minute
+			wp_send_json_success();
+		} else {
+			wp_send_json_error();
+		}
 	}
 
 	function delete_specials_category() {
@@ -556,6 +511,118 @@ class Vmb_Widgets_Admin {
 			}
 		}
 		return $template;
+	}
+
+	function conditionally_flush_rewrite_rules() {
+		if (get_transient('flush_rewrite_rules_needed')) {
+			flush_rewrite_rules();
+			delete_transient('flush_rewrite_rules_needed');
+		}
+	}
+
+	/**
+	 * Register the stylesheets for the admin area.
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_styles() {
+
+		/**
+		 * This function is provided for demonstration purposes only.
+		 *
+		 * An instance of this class should be passed to the run() function
+		 * defined in Vmb_Widgets_Loader as all of the hooks are defined
+		 * in that particular class.
+		 *
+		 * The Vmb_Widgets_Loader will then create the relationship
+		 * between the defined hooks and the functions defined in this
+		 * class.
+		 */
+
+		$screen = get_current_screen();
+
+		error_log('Current screen ID: ' . $screen->id); // Log the screen ID
+
+		if( ($screen->id === 'toplevel_page_vmb_settings') || ($screen->id === 'vmb-settings_page_manage_categories') || ($screen->id === 'vmb-settings_page_manage_specials') ) {
+
+			// Data tables
+			wp_enqueue_style( $this->plugin_name .'_datatables', 'https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.min.css');
+
+			// Bootstrap
+			wp_enqueue_style( $this->plugin_name .'_bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css');
+
+
+			wp_enqueue_style( $this->plugin_name . '_normalize', plugin_dir_url( __FILE__ ) . 'css/normalize.css', array(), $this->version, 'all' );
+		}
+
+
+		
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/vmb-widgets-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . '_specials', plugin_dir_url( __FILE__ ) . 'css/vmb-widgets-specials-admin.css', array(), $this->version, 'all' );
+			
+		
+		
+	}
+
+	/**
+	 * Register the JavaScript for the admin area.
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_scripts() {
+
+		/**
+		 * This function is provided for demonstration purposes only.
+		 *
+		 * An instance of this class should be passed to the run() function
+		 * defined in Vmb_Widgets_Loader as all of the hooks are defined
+		 * in that particular class.
+		 *
+		 * The Vmb_Widgets_Loader will then create the relationship
+		 * between the defined hooks and the functions defined in this
+		 * class.
+		 */
+
+		
+
+		$screen = get_current_screen();
+
+		error_log('Current screen ID: ' . $screen->id); // Log the screen ID
+
+		if( ($screen->id === 'toplevel_page_vmb_settings') || ($screen->id === 'vmb-settings_page_manage_categories') || ($screen->id === 'vmb-settings_page_manage_specials') ) {
+			
+			// Bootstrap
+			wp_enqueue_script( $this->plugin_name .'_bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js', array( 'jquery' ), $this->version, false );
+
+			// Data tables
+			wp_enqueue_script( $this->plugin_name .'_datatables', 'https://cdn.datatables.net/2.1.3/js/dataTables.min.js', array( 'jquery' ), $this->version, false );
+			
+			// Sweet Alert
+			wp_enqueue_script( $this->plugin_name . '_sweetalert', 'https://cdn.jsdelivr.net/npm/sweetalert2@11', null, $this->version, false );
+
+		}
+
+		
+		wp_enqueue_script( $this->plugin_name . '_helpers', plugin_dir_url( __FILE__ ) . 'js/helpers/vmb-widgets-helper-functions.js', array( 'jquery' ), $this->version, false );
+
+		wp_enqueue_script( $this->plugin_name . '_specials', plugin_dir_url( __FILE__ ) . 'js/specials/vmb-widgets-specials.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . '_specials_category', plugin_dir_url( __FILE__ ) . 'js/specials/vmb-widgets-specials-category.js', array( 'jquery' ), $this->version, false );
+		
+		$cached_specials = get_option('vmb_api_cached_specials', true);
+		$cached_specials_category = get_option('vmb_specials_category', true);
+		$api_synced = get_option('vmb_api_specials_synced', true);
+
+		wp_localize_script( $this->plugin_name . '_specials', 'vmb_ajax',  
+			array(
+				'cached_specials' => $cached_specials,
+				'cached_special_categories' => $cached_specials_category,
+				'ajax_url' => admin_url('admin-ajax.php'),
+        		'nonce' => wp_create_nonce('specials_nonce')
+			)
+		);
+
+		
+
 	}
 
 }
