@@ -4,24 +4,25 @@
     "description": "Custom made plugin for Vacation Myrtle Beach.",
     "main": "index.js",
     "scripts": {
-        "start": "gulp",
-        "build": "gulp build --prod",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build": "gulp build",
+        "watch": "gulp watch",
+        "zip": "gulp zip"
     },
     "keywords": ["specials", "reviews"],
     "author": "Braudy Pedrosa",
     "license": "ISC",
     "dependencies": {
-        "gulp": "^4.0.2",
-        "sass": "^1.32.8"
+        "yargs": "^17.0.1"
     },
     "devDependencies": {
-        "gulp-sass": "^5.0.0",
+        "gulp": "^4.0.2",
         "gulp-clean-css": "^4.3.0",
         "gulp-concat": "^2.6.1",
-        "gulp-terser": "^2.0.1",
         "gulp-if": "^3.0.0",
-        "yargs": "^17.0.1"
+        "gulp-sass": "^5.0.0",
+        "gulp-terser": "^1.4.0",
+        "gulp-zip": "^5.1.0",
+        "sass": "^1.32.8"
   }
 }
   

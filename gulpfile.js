@@ -5,6 +5,7 @@ const concat = require('gulp-concat');
 const terser = require('gulp-terser');
 const gulpIf = require('gulp-if');
 const yargs = require('yargs');
+const zip = require('gulp-zip');
 
 const argv = yargs.argv;
 const isProduction = argv.prod;
@@ -39,6 +40,19 @@ function publicScripts() {
     .pipe(gulp.dest('public/dist/js'));
 }
 
+function zipFiles() {
+  return gulp.src([
+      '**/*', 
+      '!node_modules/**', 
+      '!bundled/**', 
+      '!dist/**',
+      '!gulpfile.js',
+      '!package-lock.json'
+    ])
+    .pipe(zip('vmb-widgets.zip'))
+    .pipe(gulp.dest('bundled'));
+}
+
 function watchFiles() {
   gulp.watch('admin/assets/scss/*.scss', adminStyles);
   gulp.watch('public/assets/scss/*/*.scss', publicStyles);
@@ -48,6 +62,7 @@ function watchFiles() {
 
 const build = gulp.parallel(adminStyles, publicStyles, adminScripts, publicScripts);
 const watch = gulp.series(build, watchFiles);
+gulp.task('zip', gulp.series(build, zipFiles));
 
 gulp.task('build', build);
 gulp.task('watch', watch);
