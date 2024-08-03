@@ -6,7 +6,8 @@
     "scripts": {
         "build": "gulp build",
         "watch": "gulp watch",
-        "zip": "gulp zip"
+        "zip": "gulp zip",
+        "deploy": "gulp build && gulp zip"  
     },
     "keywords": ["specials", "reviews"],
     "author": "Braudy Pedrosa",
