@@ -94,15 +94,42 @@ class Vmb_Widgets_Public {
 
 	function load_specialcode_template($template) {
 		$specialcode = get_query_var('specialcode');
+
 		if ($specialcode) {
 			$plugin_template = plugin_dir_path(__FILE__) . 'partials/custom/specialcode-template.php';
-
-			error_log('specialcode template: ' . $plugin_template );
+	
+			error_log('specialcode template: ' . $plugin_template);
 			if (file_exists($plugin_template)) {
+				error_log('specialcode template status: Forwarded');
 				return $plugin_template;
 			}
 		}
 		return $template;
+	}
+
+	// Ensure Elementor does not treat custom endpoints as archives
+	function prevent_elementor_treating_as_archive($should_display_content) {
+
+		error_log('Query Vars Elementor:' . get_query_var('specialcode'));
+		if (get_query_var('specialcode')) {
+			error_log('PREVENTED');
+			return false;
+		}
+		return $should_display_content;
+	}
+
+	function adjust_specialcode_main_query($query) {
+		if (!is_admin() && $query->is_main_query() && get_query_var('specialcode')) {
+			// Prevent default handling by post type
+			$query->set('post_type', 'page');
+			$query->is_home = false;
+			$query->is_single = false;
+			$query->is_singular = false;
+			$query->is_archive = false;
+			$query->is_category = false;
+			$query->is_tag = false;
+			$query->is_page = true;
+		}
 	}
 
 

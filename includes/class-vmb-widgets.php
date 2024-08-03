@@ -256,6 +256,9 @@ class Vmb_Widgets {
 		$this->loader->add_filter( 'query_vars', $plugin_public, 'add_specialcode_query_var' );
 		$this->loader->add_filter( 'template_include', $plugin_public, 'load_specialcode_template' );
 		$this->loader->add_filter( 'body_class', $plugin_public, 'add_specialcode_body_class' );
+		
+		$this->loader->add_filter( 'elementor/theme/archive/should_display_content', $plugin_public, 'prevent_elementor_treating_as_archive');
+		$this->loader->add_action( 'pre_get_posts', $plugin_public, 'adjust_specialcode_main_query');
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
