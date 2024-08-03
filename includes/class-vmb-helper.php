@@ -22,6 +22,29 @@ class VMB_HELPER {
         return $current_date > $date;
     }
 
+    function filter_specials_by_category($category) {
+        // Get specials
+        $specials = get_option('vmb_api_cached_specials') ? get_option('vmb_api_cached_specials') : array();
+    
+        $data = json_decode($specials, true);
+        
+        // Initialize an array to hold the filtered results
+        $filtered_specials = array();
+        
+        // Iterate through the data and filter based on category and disable status
+        foreach ($data as $special) {
+            if ($special['category'] == $category && !$special['disable']) {
+                error_log('Matched category: ' . $special['category']);
+                $filtered_specials[] = $special;
+            }
+        }
+    
+        // Debugging: Log the filtered results
+        error_log('Filtered results: ' . print_r($filtered_specials, true));
+    
+        return $filtered_specials;
+    }
+
     function get_specials($json, $key, $value) {
     
         $data = json_decode($json, true);
@@ -37,6 +60,26 @@ class VMB_HELPER {
     
         return $filteredData;
     }
+
+    function get_resort_id_by_name($name) {
+        // Arguments for the query
+        $args = array(
+            'post_type' => 'resort', // Custom post type
+            'title' => $name, // Post title to search for
+            'posts_per_page' => 1, // Only need one result
+            'fields' => 'ids' // Only return the IDs
+        );
     
+        // Execute the query and get the posts
+        $posts = get_posts($args);
+    
+        // Return the first post ID if available, otherwise null
+        return !empty($posts) ? $posts[0] : null;
+    }
+
+    
+    public function displayMessage($response) {
+        return '<div class="response-notice '.$response['code'].'">'.$response['message'].'</div>';
+    }
 
 }

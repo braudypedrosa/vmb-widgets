@@ -77,6 +77,16 @@ class Vmb_Widgets_Public {
 		}
 	}
 
+	function add_specialcode_body_class($classes) {
+		if ($specialcode = get_query_var('specialcode')) {
+			$classes[] = 'specialcode-' . sanitize_html_class(vmb_slugify($specialcode));
+			$classes[] = 'specialcode-page';
+
+			$classes = array_diff($classes, array('home', 'blog'));
+		}
+		return $classes;
+	}
+
 	function add_specialcode_query_var($vars) {
 		$vars[] = 'specialcode';
 		return $vars;

@@ -6,36 +6,37 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 @ini_set('display_errors', 0);
 
 
+$vmb_settings = json_decode(get_option('vmb_settings'));
+
+$elementor_header = $vmb_settings->elementor_header;
+$elementor_footer = $vmb_settings->elementor_footer;
+
+if( $elementor_header ) {
+    echo do_shortcode('[elementor-template id="'.$elementor_header.'"]');
+}
+
 get_header();
 
 $specialcode = get_query_var('specialcode');
-
-if ($specialcode) {
-    echo '<h1>' . esc_html($specialcode) . '</h1>';
-    // Add your custom content for this category here
-} else {
-    echo '<h1>Category not found</h1>';
-}
-
 ?>
 
 <div class="container specialcode-template">
+
+    <div class="template-title"><h1><?= $specialcode; ?></h1></div>
+
     <div class="specials-container">
-        <img src="https://via.placeholder.com/300x200" alt="Resort Image">
-        <div class="specials-content">
-            <div class="specials-title">Beach Colony Resort</div>
-            <div class="specials-subtitle">2 FREE Nights!</div>
-            <div class="specials-description">
-                Enjoy 7 nights at the beach but only pay for 5!
-            </div>
-            <div class="specials-buttons mt-3">
-                <a href="#" class="btn">View Deal Info</a>
-                <a href="#" class="btn">View Resort Info</a>
-            </div>
-        </div>
+
+    <?= do_shortcode('[display_category category="'.$specialcode.'"]'); ?>    
+        
     </div>
 </div>
 
 
 <?php
+
+if( $elementor_footer ) {
+    echo do_shortcode('[elementor-template id="'.$elementor_footer.'"]');
+}
+
 get_footer();
+

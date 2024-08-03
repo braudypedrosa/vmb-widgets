@@ -67,6 +67,18 @@ $vmb_settings = get_option('vmb_settings') ? json_decode(get_option('vmb_setting
                 <label for="guestdesk-password">Password</label>
                 <input class="vmb-input" required type="text" name="guestdesk-password" id="guestdesk-password" value="<?= (($vmb_settings != '') ? $vmb_settings->guestdesk_password : ''); ?>">
             </div>
+
+            <h3 class="vmb-title">Elementor Header and Footer</h3>
+
+            <div class="vmb-input-wrapper input-text">
+                <label for="vmb-elementor-header">Header Template ID</label>
+                <input class="vmb-input" required type="text" name="vmb-elementor-header" id="vmb-elementor-header" value="<?= (($vmb_settings != '' && isset($vmb_settings->elementor_header)) ? $vmb_settings->elementor_header : ''); ?>">
+            </div>
+
+            <div class="vmb-input-wrapper input-text">
+                <label for="vmb-elementor-footer">Footer Template ID</label>
+                <input class="vmb-input" required type="text" name="vmb-elementor-footer" id="vmb-elementor-footer" value="<?= (($vmb_settings != '' && isset($vmb_settings->elementor_footer)) ? $vmb_settings->elementor_footer : ''); ?>">
+            </div>
             
             <button class="vmb-button" type="submit">Save Settings</button> 
         </form>

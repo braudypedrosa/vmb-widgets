@@ -1,38 +1,81 @@
-.specialcode-template .specials-container {
+@import url("https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+.specialcode-page #header, .specialcode-page hr, .specialcode-page #footer {
+  display: none;
+}
+.specialcode-page .specialcode-template {
+  background: white;
+  padding: 60px 0px;
+}
+.specialcode-page .specialcode-template .template-title {
+  max-width: 980px;
+  margin: auto;
+  text-align: center;
+}
+.specialcode-page .specialcode-template .specials-container {
+  max-width: 980px;
+  margin: auto;
+}
+.specialcode-page .specialcode-template .specials-container .specialcode-item {
   display: flex;
   align-items: center;
-  padding: 20px;
-  border: 1px solid #ddd;
+  padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background-color: #fff;
 }
-.specialcode-template .specials-container img {
+@media screen and (max-width: 47.98rem) {
+  .specialcode-page .specialcode-template .specials-container .specialcode-item {
+    flex-direction: column;
+  }
+}
+.specialcode-page .specialcode-template .specials-container .specialcode-item img {
   border-radius: 10px;
-  max-width: 100%;
-  height: auto;
+  max-width: 35%;
+  height: 250px;
+  object-fit: cover;
 }
-.specialcode-template .specials-content {
-  margin-left: 20px;
+@media screen and (max-width: 47.98rem) {
+  .specialcode-page .specialcode-template .specials-container .specialcode-item img {
+    margin-bottom: 20px;
+    max-width: 100%;
+  }
 }
-.specialcode-template .specials-title {
+.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-content {
+  width: 100%;
+  margin-left: 30px;
+}
+@media screen and (max-width: 47.98rem) {
+  .specialcode-page .specialcode-template .specials-container .specialcode-item .specials-content {
+    margin-left: 0px;
+    padding: 0px 10px;
+    width: auto;
+  }
+}
+.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-title {
   font-size: 24px;
   font-weight: bold;
   color: #1c4587;
+  margin-bottom: 20px;
 }
-.specialcode-template .specials-subtitle {
+.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-subtitle {
   font-weight: bold;
-}
-.specialcode-template .specials-description {
   font-size: 16px;
-  margin-top: 10px;
 }
-.specialcode-template .specials-buttons {
+.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-description {
+  font-size: 16px;
+}
+.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-buttons {
   display: flex;
   gap: 10px;
   margin-top: 20px;
 }
-.specialcode-template .specials-buttons .btn {
+@media screen and (max-width: 47.98rem) {
+  .specialcode-page .specialcode-template .specials-container .specialcode-item .specials-buttons {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+}
+.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-buttons .btn {
   margin-right: 10px;
   background-color: #ffde00;
   color: #1c4587;
@@ -44,4 +87,8 @@
   line-height: 1em;
   text-decoration: none;
   font-family: "Poppins";
+  transition: all 0.3s;
+}
+.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-buttons .btn:hover {
+  background-color: #fab400;
 }

@@ -4,6 +4,7 @@ add_shortcode('vmb_reviews', 'display_vmb_reviews');
 add_shortcode('vmb_specials', 'display_vmb_specials');
 add_shortcode('related_specials', 'display_related_specials');
 add_shortcode('display_special', 'display_special_shortcode');
+add_shortcode('display_category', 'display_special_category');
 
 function display_vmb_reviews($atts) {
 
@@ -182,10 +183,57 @@ function display_special_shortcode($atts) {
     return $output;
 }
 
-add_shortcode('display_special', 'display_special_shortcode');
+function display_special_category($atts) {
+    $atts = shortcode_atts(
+        array(
+            'category' => '',
+        ),
+        $atts,
+        'display_category'
+    );
 
+    $helper = new VMB_HELPER();
 
-add_shortcode('display_special', 'display_special_shortcode');
+    $specials = $helper->filter_specials_by_category($atts['category']);
+
+    $output = '';
+
+    if(count($specials) > 0) {
+
+        foreach($specials as $special) {
+            
+
+            $post_id = $helper->get_resort_id_by_name($special['resort']);
+
+            if($post_id) {
+
+                $permalink = get_the_permalink($post_id);
+                $image = get_field('preview_image', $post_id);
+                $reservationURL = get_field('reservation_url', $post_id);
+
+                $output .= '<div class="specialcode-item" id="special-'.$post_id.'">
+                    <img src="'. (($image) ? $image : 'https://via.placeholder.com/600x400') .'" alt="'.$special['resort'].'">
+                    <div class="specials-content">
+                        <div class="specials-title">'.$special['resort'].'</div>
+                        <div class="specials-subtitle">'.$special['name'].'</div>
+                        '. (($special['description']) ? '<div class="specials-description">'. $special['description'] .'</div>' : '') .'
+                        <div class="specials-buttons mt-3">
+                            <a href="'.$reservationURL.'?packageId='.$special['id'].'" class="btn">View Deal Info</a>
+                            <a href="'.$permalink.'" class="btn">View Resort Info</a>
+                        </div>
+                    </div>
+                </div>';
+
+            }
+        }
+
+        return $output;
+
+    } else {
+        return $helper->displayMessage(['code' => 'error', 'message' => 'No specials found under category: ' . $atts['category']]);
+    }
+}
+
 
 
 function test_shortcode_func() {

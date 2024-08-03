@@ -113,6 +113,14 @@ class Vmb_Widgets_Admin {
 			$vmb_settings['guestdesk_password'] = $_POST['guestdesk-password'];
 		}
 
+		if(isset($_POST['vmb-elementor-header'])) {
+			$vmb_settings['elementor_header'] = $_POST['vmb-elementor-header'];
+		}
+
+		if(isset($_POST['vmb-elementor-footer'])) {
+			$vmb_settings['elementor_footer'] = $_POST['vmb-elementor-footer'];
+		}
+
 		update_option('vmb_settings', json_encode($vmb_settings));
 
 
@@ -509,8 +517,6 @@ class Vmb_Widgets_Admin {
 
 		$screen = get_current_screen();
 
-		error_log('Current screen ID: ' . $screen->id); // Log the screen ID
-
 		if( ($screen->id === 'toplevel_page_vmb_settings') || ($screen->id === 'vmb-settings_page_manage_categories') || ($screen->id === 'vmb-settings_page_manage_specials') ) {
 
 			// Data tables
@@ -548,7 +554,6 @@ class Vmb_Widgets_Admin {
 
 		$screen = get_current_screen();
 
-		error_log('Current screen ID: ' . $screen->id); // Log the screen ID
 
 		if( ($screen->id === 'toplevel_page_vmb_settings') || ($screen->id === 'vmb-settings_page_manage_categories') || ($screen->id === 'vmb-settings_page_manage_specials') ) {
 			

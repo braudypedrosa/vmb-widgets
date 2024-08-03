@@ -252,9 +252,10 @@ class Vmb_Widgets {
 		$plugin_public = new Vmb_Widgets_Public( $this->get_plugin_name(), $this->get_version() );
 
 		// initialize custom endpoints
-		$this->loader->add_action('init', $plugin_public, 'register_special_endpoints');
+		$this->loader->add_action( 'init', $plugin_public, 'register_special_endpoints' );
 		$this->loader->add_filter( 'query_vars', $plugin_public, 'add_specialcode_query_var' );
 		$this->loader->add_filter( 'template_include', $plugin_public, 'load_specialcode_template' );
+		$this->loader->add_filter( 'body_class', $plugin_public, 'add_specialcode_body_class' );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );

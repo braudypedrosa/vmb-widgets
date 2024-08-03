@@ -28,3 +28,7 @@ function pretty_print_array($array) {
         print_r($array);
     echo "</pre>";
 }
+
+function vmb_slugify($string) {
+    return trim(preg_replace('/[\s-]+/', '-', preg_replace('/[^a-z0-9\s-]/', '', strtolower($string))), '-');
+}
