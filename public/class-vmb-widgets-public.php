@@ -59,6 +59,43 @@ class Vmb_Widgets_Public {
 	 *
 	 * @since    1.0.0
 	 */
+
+
+
+	// register custom endpoints
+	function register_special_endpoints() {
+
+		$json_data = get_option('vmb_specials_category', '[]');
+    	$categories = json_decode($json_data, true);
+
+		foreach ($categories as $category) {
+			add_rewrite_rule(
+				'^specialcode/' . $category['slug'] . '/?$',
+				'index.php?specialcode=' . $category['name'],
+				'top'
+			);
+		}
+	}
+
+	function add_specialcode_query_var($vars) {
+		$vars[] = 'specialcode';
+		return $vars;
+	}
+
+	function load_specialcode_template($template) {
+		$specialcode = get_query_var('specialcode');
+		if ($specialcode) {
+			$plugin_template = plugin_dir_path(__FILE__) . 'partials/custom/specialcode-template.php';
+
+			error_log('specialcode template: ' . $plugin_template );
+			if (file_exists($plugin_template)) {
+				return $plugin_template;
+			}
+		}
+		return $template;
+	}
+
+
 	public function enqueue_styles() {
 
 		/**
@@ -72,16 +109,13 @@ class Vmb_Widgets_Public {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
-
 		 
 		wp_enqueue_style( $this->plugin_name .'_slick', 'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css');
 		wp_enqueue_style( $this->plugin_name .'_slick_theme', 'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css');
 		wp_enqueue_style( $this->plugin_name .'_font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/vmb-widgets-public.css', array(), $this->version, 'all' );
-		
-		
-		
+
+
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'dist/css/public-main.css', array(), $this->version, 'all' );
 
 	}
 
@@ -105,7 +139,9 @@ class Vmb_Widgets_Public {
 		 */
 
 		wp_enqueue_script( $this->plugin_name .'_slick', 'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/vmb-widgets-public.js', array( 'jquery' ), $this->version, false );
+
+
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'dist/js/public-main.js', array( 'jquery' ), $this->version, false );
 	
 	}
 

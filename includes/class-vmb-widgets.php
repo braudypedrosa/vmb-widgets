@@ -209,13 +209,7 @@ class Vmb_Widgets {
 		$this->loader->add_action('wp_ajax_delete_specials_category', $plugin_admin, 'delete_specials_category');
 		$this->loader->add_action('wp_ajax_nopriv_delete_specials_category', $plugin_admin, 'delete_specials_category');
 
-		// initialize custom endpoints
-		$this->loader->add_action('init', $plugin_admin, 'register_special_endpoints');
-		$this->loader->add_filter( 'query_vars', $plugin_admin, 'add_specialcode_query_var' );
-		$this->loader->add_filter( 'template_include', $plugin_admin, 'load_specialcode_template' );
-
-		
-
+	
 		// custom columns
 		$this->loader->add_filter('manage_vmb_reviews_posts_columns', $plugin_admin, 'set_vmb_reviews_custom_columns');
 
@@ -256,6 +250,11 @@ class Vmb_Widgets {
 	private function define_public_hooks() {
 
 		$plugin_public = new Vmb_Widgets_Public( $this->get_plugin_name(), $this->get_version() );
+
+		// initialize custom endpoints
+		$this->loader->add_action('init', $plugin_public, 'register_special_endpoints');
+		$this->loader->add_filter( 'query_vars', $plugin_public, 'add_specialcode_query_var' );
+		$this->loader->add_filter( 'template_include', $plugin_public, 'load_specialcode_template' );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );

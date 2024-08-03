@@ -1,0 +1,47 @@
+.specialcode-template .specials-container {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+.specialcode-template .specials-container img {
+  border-radius: 10px;
+  max-width: 100%;
+  height: auto;
+}
+.specialcode-template .specials-content {
+  margin-left: 20px;
+}
+.specialcode-template .specials-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1c4587;
+}
+.specialcode-template .specials-subtitle {
+  font-weight: bold;
+}
+.specialcode-template .specials-description {
+  font-size: 16px;
+  margin-top: 10px;
+}
+.specialcode-template .specials-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+.specialcode-template .specials-buttons .btn {
+  margin-right: 10px;
+  background-color: #ffde00;
+  color: #1c4587;
+  font-weight: bold;
+  font-size: 15px;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 500;
+  line-height: 1em;
+  text-decoration: none;
+  font-family: "Poppins";
+}

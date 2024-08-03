@@ -480,38 +480,6 @@ class Vmb_Widgets_Admin {
 	}
 
 
-	// register custom endpoints
-	function register_special_endpoints() {
-
-		$json_data = get_option('vmb_specials_category', '[]');
-    	$categories = json_decode($json_data, true);
-
-		foreach ($categories as $category) {
-			add_rewrite_rule(
-				'^specialcode/' . $category['slug'] . '/?$',
-				'index.php?specialcode=' . $category['name'],
-				'top'
-			);
-		}
-	}
-
-	function add_specialcode_query_var($vars) {
-		$vars[] = 'specialcode';
-		return $vars;
-	}
-
-	function load_specialcode_template($template) {
-		$specialcode = get_query_var('specialcode');
-		if ($specialcode) {
-			$plugin_template = plugin_dir_path(__FILE__) . 'partials/custom/specialcode-template.php';
-
-			error_log('specialcode template: ' . $plugin_template );
-			if (file_exists($plugin_template)) {
-				return $plugin_template;
-			}
-		}
-		return $template;
-	}
 
 	function conditionally_flush_rewrite_rules() {
 		if (get_transient('flush_rewrite_rules_needed')) {
@@ -551,17 +519,10 @@ class Vmb_Widgets_Admin {
 			// Bootstrap
 			wp_enqueue_style( $this->plugin_name .'_bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css');
 
-
-			wp_enqueue_style( $this->plugin_name . '_normalize', plugin_dir_url( __FILE__ ) . 'css/normalize.css', array(), $this->version, 'all' );
 		}
 
 
-		
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/vmb-widgets-admin.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name . '_specials', plugin_dir_url( __FILE__ ) . 'css/vmb-widgets-specials-admin.css', array(), $this->version, 'all' );
-			
-		
-		
+		wp_enqueue_style( $this->plugin_name . '_admin_styles', plugin_dir_url( __FILE__ ) . 'dist/css/admin-main.css', array(), $this->version, 'all' );
 	}
 
 	/**
@@ -602,17 +563,14 @@ class Vmb_Widgets_Admin {
 
 		}
 
-		
-		wp_enqueue_script( $this->plugin_name . '_helpers', plugin_dir_url( __FILE__ ) . 'js/helpers/vmb-widgets-helper-functions.js', array( 'jquery' ), $this->version, false );
 
-		wp_enqueue_script( $this->plugin_name . '_specials', plugin_dir_url( __FILE__ ) . 'js/specials/vmb-widgets-specials.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->plugin_name . '_specials_category', plugin_dir_url( __FILE__ ) . 'js/specials/vmb-widgets-specials-category.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . '_admin_scripts', plugin_dir_url( __FILE__ ) . 'dist/js/admin-main.js', array( 'jquery' ), $this->version, false );
 		
 		$cached_specials = get_option('vmb_api_cached_specials', true);
 		$cached_specials_category = get_option('vmb_specials_category', true);
 		$api_synced = get_option('vmb_api_specials_synced', true);
 
-		wp_localize_script( $this->plugin_name . '_specials', 'vmb_ajax',  
+		wp_localize_script( $this->plugin_name . '_admin_scripts', 'vmb_ajax',  
 			array(
 				'cached_specials' => $cached_specials,
 				'cached_special_categories' => $cached_specials_category,

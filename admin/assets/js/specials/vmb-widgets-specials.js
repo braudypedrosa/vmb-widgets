@@ -24,7 +24,6 @@ function generateSpecialsTable(specials, categories) {
     });
 }
 
-
 // Function to reset the form and modal title for specials
 function resetSpecialForm() {
     document.getElementById('specialForm').reset();
@@ -125,4 +124,16 @@ function toggleDisableSpecial(index, button) {
     }
 
     saveSpecials(specials);
+}
+
+// Fetch categories from the server
+function fetchSpecials() {
+    return jQuery.ajax({
+        url: vmb_ajax.ajax_url,
+        type: 'POST',
+        data: { 
+            action: 'get_specials_meta',
+            option: 'vmb_api_cached_specials'
+        }
+    });
 }

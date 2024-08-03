@@ -13,11 +13,12 @@ function generateSlug(text) {
         .replace(/^-+|-+$/g, '');        // Remove leading and trailing hyphens
 }
 
+// formate date
 function formatDate(isoDateString) {
     let date = new Date(isoDateString);
     let options = { year: 'numeric', month: 'long', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
 }
-
+ 
 
 
