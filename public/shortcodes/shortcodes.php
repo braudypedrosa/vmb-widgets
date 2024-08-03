@@ -212,7 +212,7 @@ function display_special_category($atts) {
                 $reservationURL = get_field('reservation_url', $post_id);
 
                 $output .= '<div class="specialcode-item" id="special-'.$post_id.'">
-                    <img src="'. (($image) ? $image : 'https://via.placeholder.com/600x400') .'" alt="'.$special['resort'].'">
+                    <img src="'. (($image) ? $image['url'] : 'https://via.placeholder.com/600x400') .'" alt="'.$special['resort'].'">
                     <div class="specials-content">
                         <div class="specials-title">'.$special['resort'].'</div>
                         <div class="specials-subtitle">'.$special['name'].'</div>
