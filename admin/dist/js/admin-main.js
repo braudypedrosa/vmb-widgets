@@ -48,7 +48,7 @@ function loadCategories() {
                     actionCell.innerHTML = `
                         <button class="btn btn-sm btn-warning" onclick="editCategory(this, ${index})">Edit</button>
                         <button class="btn btn-sm btn-danger" onclick="deleteCategory(this, ${index})">Delete</button>
-                        <button class="btn btn-sm btn-info" onclick="window.location.href='/specialcode/${category.slug}'">View</button>
+                        <button class="btn btn-sm btn-info" onclick="window.location.href='/${vmb_ajax.cached_category_slug}/${category.slug}'">View</button>
                     `;
                 });
             }

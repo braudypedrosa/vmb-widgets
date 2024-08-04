@@ -113,12 +113,8 @@ class Vmb_Widgets_Admin {
 			$vmb_settings['guestdesk_password'] = $_POST['guestdesk-password'];
 		}
 
-		if(isset($_POST['vmb-elementor-header'])) {
-			$vmb_settings['elementor_header'] = $_POST['vmb-elementor-header'];
-		}
-
-		if(isset($_POST['vmb-elementor-footer'])) {
-			$vmb_settings['elementor_footer'] = $_POST['vmb-elementor-footer'];
+		if(isset($_POST['category-slug'])) {
+			$vmb_settings['category_slug'] = $_POST['category-slug'];
 		}
 
 		update_option('vmb_settings', json_encode($vmb_settings));
@@ -128,7 +124,8 @@ class Vmb_Widgets_Admin {
 			'code' => 'success',
 			'message' => 'Settings saved successfully!'
 		];
-	
+
+		flush_rewrite_rules();
 
 		header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=".$response['code']."&msg=".$response['message']);
         exit;
@@ -573,12 +570,15 @@ class Vmb_Widgets_Admin {
 		
 		$cached_specials = get_option('vmb_api_cached_specials', true);
 		$cached_specials_category = get_option('vmb_specials_category', true);
+
+		$vmb_settings = json_decode(get_option('vmb_settings'));
 		$api_synced = get_option('vmb_api_specials_synced', true);
 
 		wp_localize_script( $this->plugin_name . '_admin_scripts', 'vmb_ajax',  
 			array(
 				'cached_specials' => $cached_specials,
 				'cached_special_categories' => $cached_specials_category,
+				'cached_category_slug' => $vmb_settings->category_slug,
 				'ajax_url' => admin_url('admin-ajax.php'),
         		'nonce' => wp_create_nonce('specials_nonce')
 			)
