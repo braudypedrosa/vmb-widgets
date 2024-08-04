@@ -20,18 +20,3 @@ function formatDate(isoDateString) {
     return date.toLocaleDateString('en-US', options);
 }
  
-// format 
-function buildCategoryTable(tableBody, category, index) {
-    const newRow = tableBody.insertRow();
-    const nameCell = newRow.insertCell(0);
-    const slugCell = newRow.insertCell(1);
-    const actionCell = newRow.insertCell(2);
-
-    nameCell.textContent = category.name;
-    slugCell.textContent = category.slug;
-    actionCell.innerHTML = `
-        <button class="btn btn-sm btn-warning" onclick="editCategory(this, ${index})">Edit</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteCategory(this, ${index})">Delete</button>
-        <button class="btn btn-sm btn-info" onclick="window.location.href='/${vmb_ajax.cached_category_slug}/${category.slug}'">View</button>
-    `;
-}
