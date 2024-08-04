@@ -77,6 +77,8 @@ class Vmb_Widgets_Public {
 				'top'
 			);
 		}
+
+		flush_rewrite_rules();
 	}
 
 	function add_specialcode_body_class($classes) {

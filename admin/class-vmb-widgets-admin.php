@@ -125,8 +125,6 @@ class Vmb_Widgets_Admin {
 			'message' => 'Settings saved successfully!'
 		];
 
-		flush_rewrite_rules();
-
 		header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=".$response['code']."&msg=".$response['message']);
         exit;
 	}
