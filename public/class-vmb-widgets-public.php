@@ -72,7 +72,7 @@ class Vmb_Widgets_Public {
 
 		foreach ($categories as $category) {
 			add_rewrite_rule(
-				'^'. $vmb_settings->category_slug .'/' . $category['slug'] . '/?$',
+				'^'. (( isset($vmb_settings->category_slug) && $vmb_settings->category_slug != '' ) ? $vmb_settings->category_slug : 'specialcode') .'/' . $category['slug'] . '/?$',
 				'index.php?specialcode=' . $category['name'],
 				'top'
 			);
