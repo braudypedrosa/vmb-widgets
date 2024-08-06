@@ -19,7 +19,7 @@ function adminStyles() {
 }
 
 function publicStyles() {
-  return gulp.src('public/assets/scss/*/*.scss')
+  return gulp.src('public/assets/scss/*.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(concat('public-main.css'))
     .pipe(gulpIf(isProduction, cleanCSS()))
