@@ -16,7 +16,7 @@
  * Plugin Name:       VMB Widgets
  * Plugin URI:        https://buildupbookings.com/
  * Description:       A lightweight collection of plugins for Vacation Myrtle Beach.
- * Version:           2.0.1
+ * Version:           2.0.2
  * Author:            Braudy Pedrosa
  * Author URI:        https://buildupbookings.com//
  * License:           GPL-2.0+
@@ -35,7 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.1 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'VMB_WIDGETS_VERSION', '2.0.1' );
+define( 'VMB_WIDGETS_VERSION', '2.0.2' );
 
 /**
  * The code that runs during plugin activation.

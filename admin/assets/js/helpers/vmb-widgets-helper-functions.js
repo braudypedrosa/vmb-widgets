@@ -20,5 +20,3 @@ function formatDate(isoDateString) {
     return date.toLocaleDateString('en-US', options);
 }
  
-
-

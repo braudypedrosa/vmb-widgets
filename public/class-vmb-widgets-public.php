@@ -68,13 +68,17 @@ class Vmb_Widgets_Public {
 		$json_data = get_option('vmb_specials_category', '[]');
     	$categories = json_decode($json_data, true);
 
+		$vmb_settings = json_decode(get_option('vmb_settings'));
+
 		foreach ($categories as $category) {
 			add_rewrite_rule(
-				'^specialcode/' . $category['slug'] . '/?$',
+				'^'. $vmb_settings->category_slug .'/' . $category['slug'] . '/?$',
 				'index.php?specialcode=' . $category['name'],
 				'top'
 			);
 		}
+
+		flush_rewrite_rules();
 	}
 
 	function add_specialcode_body_class($classes) {

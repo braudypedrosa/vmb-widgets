@@ -106,7 +106,10 @@ document.getElementById('entryForm').addEventListener('submit', function(event) 
 
 // Load categories on page load
 document.addEventListener('DOMContentLoaded', function() {
-    loadCategories();
+
+    const categories = JSON.parse(vmb_ajax.cached_special_categories);
+    loadCategories(categories);
+    
 });
 
 
