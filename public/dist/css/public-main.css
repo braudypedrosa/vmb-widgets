@@ -2,20 +2,22 @@
 .specialcode-page #header, .specialcode-page hr, .specialcode-page #footer {
   display: none;
 }
-.specialcode-page .specialcode-template {
+
+.specialcode-template {
   background: white;
   padding: 60px 0px;
 }
-.specialcode-page .specialcode-template .template-title {
+.specialcode-template .template-title {
   max-width: 980px;
   margin: auto;
   text-align: center;
 }
-.specialcode-page .specialcode-template .specials-container {
+
+.specials-container, .specials-container .elementor-shortcode {
   max-width: 980px;
   margin: auto;
 }
-.specialcode-page .specialcode-template .specials-container .specialcode-item {
+.specials-container .specialcode-item, .specials-container .elementor-shortcode .specialcode-item {
   display: flex;
   align-items: center;
   padding: 15px;
@@ -23,59 +25,59 @@
   background-color: #fff;
 }
 @media screen and (max-width: 47.98rem) {
-  .specialcode-page .specialcode-template .specials-container .specialcode-item {
+  .specials-container .specialcode-item, .specials-container .elementor-shortcode .specialcode-item {
     flex-direction: column;
   }
 }
-.specialcode-page .specialcode-template .specials-container .specialcode-item img {
+.specials-container .specialcode-item img, .specials-container .elementor-shortcode .specialcode-item img {
   border-radius: 10px;
   max-width: 35%;
   height: 250px;
   object-fit: cover;
 }
 @media screen and (max-width: 47.98rem) {
-  .specialcode-page .specialcode-template .specials-container .specialcode-item img {
+  .specials-container .specialcode-item img, .specials-container .elementor-shortcode .specialcode-item img {
     margin-bottom: 20px;
     max-width: 100%;
   }
 }
-.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-content {
+.specials-container .specialcode-item .specials-content, .specials-container .elementor-shortcode .specialcode-item .specials-content {
   width: 100%;
   margin-left: 30px;
 }
 @media screen and (max-width: 47.98rem) {
-  .specialcode-page .specialcode-template .specials-container .specialcode-item .specials-content {
+  .specials-container .specialcode-item .specials-content, .specials-container .elementor-shortcode .specialcode-item .specials-content {
     margin-left: 0px;
     padding: 0px 10px;
     width: auto;
   }
 }
-.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-title {
+.specials-container .specialcode-item .specials-title, .specials-container .elementor-shortcode .specialcode-item .specials-title {
   font-size: 24px;
   font-weight: bold;
   color: #1c4587;
   margin-bottom: 20px;
 }
-.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-subtitle {
+.specials-container .specialcode-item .specials-subtitle, .specials-container .elementor-shortcode .specialcode-item .specials-subtitle {
   font-weight: bold;
   font-size: 16px;
 }
-.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-description {
+.specials-container .specialcode-item .specials-description, .specials-container .elementor-shortcode .specialcode-item .specials-description {
   font-size: 16px;
 }
-.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-buttons {
+.specials-container .specialcode-item .specials-buttons, .specials-container .elementor-shortcode .specialcode-item .specials-buttons {
   display: flex;
   gap: 10px;
   margin-top: 20px;
 }
 @media screen and (max-width: 47.98rem) {
-  .specialcode-page .specialcode-template .specials-container .specialcode-item .specials-buttons {
+  .specials-container .specialcode-item .specials-buttons, .specials-container .elementor-shortcode .specialcode-item .specials-buttons {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
   }
 }
-.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-buttons .btn {
+.specials-container .specialcode-item .specials-buttons .btn, .specials-container .elementor-shortcode .specialcode-item .specials-buttons .btn {
   margin-right: 10px;
   background-color: #ffde00;
   color: #1c4587;
@@ -89,7 +91,7 @@
   font-family: "Poppins";
   transition: all 0.3s;
 }
-.specialcode-page .specialcode-template .specials-container .specialcode-item .specials-buttons .btn:hover {
+.specials-container .specialcode-item .specials-buttons .btn:hover, .specials-container .elementor-shortcode .specialcode-item .specials-buttons .btn:hover {
   background-color: #fab400;
 }
 
