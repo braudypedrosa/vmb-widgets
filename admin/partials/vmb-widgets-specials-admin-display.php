@@ -10,7 +10,7 @@
                     <th>Name</th>
                     <th>Description</th>
                     <th>Expiration</th>
-                    <th>Category</th>
+                    <th>Promo Codes</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -51,10 +51,10 @@
                         <label for="specialExpiration" class="form-label">Expiration:</label>
                         <input type="date" readonly disabled class="form-control dt-input" id="specialExpiration" required>
                     </div>
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="specialCategory" class="form-label">Category:</label>
                         <select class="form-control dt-input" id="specialCategory"></select>
-                    </div>
+                    </div> -->
   
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="specialDisable">
@@ -82,7 +82,7 @@
         // Get the values from the form fields
         const name = document.getElementById('specialName').value;
         const description = document.getElementById('specialDescription').value;
-        const category = document.getElementById('specialCategory').value;
+        // const category = document.getElementById('specialCategory').value;
         const disable = document.getElementById('specialDisable').checked;
         const editSpecialIndex = document.getElementById('editSpecialIndex').value;
 
@@ -96,12 +96,12 @@
 
             const nameCell = newRow.insertCell(2);
             const descriptionCell = newRow.insertCell(3);
-            const categoryCell = newRow.insertCell(5);
+            // const categoryCell = newRow.insertCell(5);
             const actionCell = newRow.insertCell(6);
 
             nameCell.textContent = name;
             descriptionCell.textContent = description;
-            categoryCell.innerHTML = category;
+            // categoryCell.innerHTML = category;
             actionCell.innerHTML = `
                 <button class="btn btn-sm btn-warning" onclick="editSpecial(${table.rows.length - 1})">Edit</button>
                 <button class="btn btn-sm ${disable ? 'btn-danger' : 'btn-secondary'}" onclick="toggleDisableSpecial(${table.rows.length - 1}, this)">
@@ -114,7 +114,7 @@
             const row = dataTable.row(editSpecialIndex).node();
             row.cells[2].textContent = name;
             row.cells[3].textContent = description;
-            row.cells[5].textContent = category;
+            // row.cells[5].textContent = category;
             row.setAttribute('data-modified', 'true'); // Mark row as modified
             row.setAttribute('data-disable', disable); // Mark row as disabled
 
@@ -140,7 +140,7 @@
                 name: row.cells[2].textContent,
                 description: row.cells[3].textContent,
                 expiration: row.cells[4].textContent,
-                category: row.cells[5].textContent,
+                // category: row.cells[5].textContent,
                 disable: row.getAttribute('data-disable') === 'true', // Include disable attribute
                 modified: row.getAttribute('data-modified') === 'true' // Include modified attribute
             });

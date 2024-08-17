@@ -22,6 +22,8 @@ class Vmb_Specials_Functions {
 	 */
 	private $version;
 
+    private $helper;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -33,67 +35,9 @@ class Vmb_Specials_Functions {
 
 		$this->plugin_name = $vmb_widgets;
 		$this->version = $version;
+        $this->helper = new VMB_HELPER();
 
 	}
-
-
-    // public function sync_specials() {
-
-    //     $helper = new VMB_API_HELPER();
-    //     $vmb_settings = json_decode(get_option('vmb_settings'));
-
-
-    //     $resorts = get_posts([
-    //         'post_type' => 'resort',
-    //         'post_status' => 'publish',
-    //         'numberposts' => -1
-    //     ]);
-
-        
-
-    //     $endpoint = 'https://external.guestdesk.com/partner/v1/System/Packages';
-
-    //     foreach($resorts as $resort) {
-
-    //         // $resortID = get_field('site_id', $resort->ID);
-    //         $resortName = get_field('site_name', $resort->ID);
-    //         $connectedProperty = $resort->post_title;
-
-            
-
-    //         $params = array(
-    //             "language" => "",
-    //             "requestId" => "",
-    //             "requestTime" => gmdate('Y-m-d\TH:i:s.v\Z'),
-    //             "sites" => array(
-    //                 array(
-    //                     "siteName" => $resortName
-    //                 )
-    //             )
-    //         );
-
-    //         $auth = base64_encode($vmb_settings->guestdesk_username.':'.$vmb_settings->guestdesk_password);
-
-    //         $headers = array(
-    //             'Authorization: Basic '.$auth,
-    //             'Content-Type: application/json',
-    //             'Accept: application/json'
-    //         );
-
-    //         $results = $helper->GuestDeskApiRequest($endpoint, 'POST', $params, $headers, 'Specials synced successfully!');
-            
-    //         if($results['code'] == 'success') {
-    //             update_post_meta($resort->ID, 'specials_' . $resortName, $results['response']);
-    //             $helper->generateVMBSpecials($results['response'][$resortName]['Packages'], $connectedProperty, $resort->ID);
-    //         }
-
-    //     }
-
-
-        
-    //     header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=".$results['code']."&msg=".$results['message']);
-    //     exit;
-    // }
 
     public function sync_specials() {
 
@@ -102,7 +46,7 @@ class Vmb_Specials_Functions {
         $synced = (get_option('vmb_api_specials_synced') != '') ? get_option('vmb_api_specials_synced') : false;
     
         $endpoint = 'https://external.guestdesk.com/partner/v1/System/Packages';
-        $message = '';
+        $message = $code = '';
     
         $resorts = get_posts([
             'post_type' => 'resort',
@@ -141,11 +85,12 @@ class Vmb_Specials_Functions {
     
                 if ($results['code'] !== 'success') {
                     $message = 'Sync error!';
-                    $api_helper->displayResponseMessage(['code' => 'fail', 'message' => 'API error!', 'response' => null]);
                     continue; // Skip to the next resort if there's an API error
                 } else {
                     $message = "Specials synced successfully!";
                 }
+
+                $code = $results['code'];
     
                 $response = $results['response'][$siteName] ?? [];
     
@@ -165,6 +110,7 @@ class Vmb_Specials_Functions {
                             'name' => $package['PackageDisplayName'],
                             'description' => $package['PackageShortDescription'],
                             'expiration' => $package['CalendarEndDate'],
+                            'category' => $package['AvailablePromoCodes'],
                             'modified' => false
                         );
     
@@ -174,10 +120,17 @@ class Vmb_Specials_Functions {
                         if ($existingSpecialKey === false || !isset($existingSpecials[$existingSpecialKey]['modified']) || !$existingSpecials[$existingSpecialKey]['modified']) {
                             $sanitizedArray[] = $sanitized;
                         } else {
+                            
+                            // always update promo code regardless if the special is modified or not
+                            $existingSpecials[$existingSpecialKey]['promo_code'];
+
                             // Keep the existing special if it's modified
                             $sanitizedArray[] = $existingSpecials[$existingSpecialKey];
                         }
                     }
+
+                    // generate promo codes
+                    $this->create_promo($package['AvailablePromoCodes']);
                 }
             }
     
@@ -189,12 +142,45 @@ class Vmb_Specials_Functions {
             // Update the option with the combined array
             update_option('vmb_api_cached_specials', json_encode(array_values($sanitizedArray))); // Ensure array is reindexed
             update_option('vmb_api_specials_synced', true);
+        } else {
+            $message = "Specials currently in synced.";
         }
     
-        header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=" . $results['code'] . "&msg=" . $message );
+        header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=" . $code . "&msg=" . $message );
         exit;
     }
-    
-    
 
+
+    private function create_promo($promoCode) {
+
+        // get all existing promo codes
+        $currentPromos = get_option('vmb_specials_category') ? json_decode(get_option('vmb_specials_category', true)) : [];
+        $existingPromo = false;
+        $newPromos = $updatedPromos = [];
+
+        error_log('Current Promo Stack: ' . print_r($currentPromos, true));
+
+
+        foreach($promoCode as $code) {
+            // // check if current promo code already exists
+            if(!empty($currentPromos)) {
+                    $promoSlug = strtolower($this->helper->slugify($code));
+
+                    $existingPromo = array_search($promoSlug, array_column($currentPromos, 'slug'));    
+                    
+                    if(!$existingPromo) {
+                        $newPromos[] = array(
+                            "name" => $code,
+                            "slug" => $promoSlug
+                        );
+                    }
+
+                $updatedPromos = array_merge($currentPromos, $newPromos);
+
+                error_log('Updated Promo Stack:' . print_r($updatedPromos, true));
+            }
+        }
+
+        update_option('vmb_specials_category', json_encode(array_values($updatedPromos)));
+    }
 }

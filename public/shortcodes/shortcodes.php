@@ -282,8 +282,6 @@ function test_shortcode_func() {
 
     // pretty_print_array($specials);
     return '<div class="vmb-widget vmb-specials">'.$output.'</div>';
-
-    return;
 }
 
 add_shortcode('test_shortcode', 'test_shortcode_func');

@@ -13,7 +13,7 @@ function generateSpecialsTable(specials, categories) {
             <td>${special.name}</td>
             <td>${special.description}</td>
             <td>${formatDate(special.expiration)}</td>
-            <td>${special.category ? special.category : ''}</td>
+            <td>${special.category ? special.category.join(', ')  : ''}</td>
             <td class="action-buttons">
                 <button class="btn btn-sm btn-warning" onclick="editSpecial(${index})">Edit</button>
                 <button class="btn btn-sm ${special.disable ? 'btn-danger' : 'btn-secondary'}" onclick="toggleDisableSpecial(${index}, this)">
@@ -65,7 +65,7 @@ function editSpecial(visualIndex) {
     const name = cells[2].textContent;
     const description = cells[3].textContent;
     const expiration = cells[4].textContent;
-    const category = cells[5].textContent;
+    // const category = cells[5].textContent;
 
     document.getElementById('specialId').value = id;
     document.getElementById('specialResort').value = resort;
@@ -74,20 +74,6 @@ function editSpecial(visualIndex) {
     document.getElementById('specialExpiration').value = expiration;
     document.getElementById('specialDisable').checked = row.getAttribute('data-disable') === 'true';
 
-    // Populate the category dropdown with options
-    fetchCategories().done(function(response) {
-        if (response.success) {
-            const categories = response.data;
-            const categorySelect = document.getElementById('specialCategory');
-            categorySelect.innerHTML = categories.map(cat => `
-                <option value="${cat.name}" ${cat.name === category ? 'selected' : ''}>
-                    ${cat.name}
-                </option>
-            `).join('');
-        } else {
-            alert('Failed to load categories');
-        }
-    });
 
     document.getElementById('editSpecialIndex').value = visualIndex;
     document.getElementById('specialModalLabel').textContent = 'Edit Special';
