@@ -8,9 +8,6 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 
 $vmb_settings = json_decode(get_option('vmb_settings'));
 
-$elementor_header = $vmb_settings->elementor_header;
-$elementor_footer = $vmb_settings->elementor_footer;
-
 get_header();
 
 $specialcode = get_query_var('specialcode');
@@ -22,7 +19,7 @@ $specialcode = get_query_var('specialcode');
 
     <div class="specials-container">
 
-    <?= do_shortcode('[display_category category="'.$specialcode.'"]'); ?>    
+    <?= do_shortcode('[display_category category="'.strtolower($specialcode).'"]'); ?>    
         
     </div>
 </div>

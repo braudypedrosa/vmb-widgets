@@ -153,34 +153,42 @@ class Vmb_Specials_Functions {
 
     private function create_promo($promoCode) {
 
-        // get all existing promo codes
+        // Get all existing promo codes
         $currentPromos = get_option('vmb_specials_category') ? json_decode(get_option('vmb_specials_category', true)) : [];
-        $existingPromo = false;
-        $newPromos = $updatedPromos = [];
-
+        $newPromos = [];
+    
         error_log('Current Promo Stack: ' . print_r($currentPromos, true));
-
-
+    
         foreach($promoCode as $code) {
-            // // check if current promo code already exists
-            if(!empty($currentPromos)) {
-                    $promoSlug = strtolower($this->helper->slugify($code));
-
-                    $existingPromo = array_search($promoSlug, array_column($currentPromos, 'slug'));    
-                    
-                    if(!$existingPromo) {
-                        $newPromos[] = array(
-                            "name" => $code,
-                            "slug" => $promoSlug
-                        );
-                    }
-
-                $updatedPromos = array_merge($currentPromos, $newPromos);
-
-                error_log('Updated Promo Stack:' . print_r($updatedPromos, true));
+            // Slugify the promo code
+            $promoSlug = strtolower($this->helper->slugify($code));
+    
+            // Check if the current promo code already exists
+            $existingPromo = false;
+            foreach($currentPromos as $promo) {
+                if ($promo->slug === $promoSlug) {
+                    $existingPromo = true;
+                    break;
+                }
+            }
+    
+            // If the promo code does not exist, add it to the new promos array
+            if(!$existingPromo) {
+                $newPromos[] = array(
+                    "name" => $promoSlug,
+                    "slug" => $promoSlug
+                );
             }
         }
-
-        update_option('vmb_specials_category', json_encode(array_values($updatedPromos)));
+    
+        // Merge the new promos with the existing ones
+        if (!empty($newPromos)) {
+            $updatedPromos = array_merge($currentPromos, $newPromos);
+            update_option('vmb_specials_category', json_encode(array_values($updatedPromos)));
+            error_log('Updated Promo Stack: ' . print_r($updatedPromos, true));
+        } else {
+            error_log('No new promos to add.');
+        }
     }
+    
 }

@@ -27,14 +27,18 @@ class VMB_HELPER {
         $specials = get_option('vmb_api_cached_specials') ? get_option('vmb_api_cached_specials') : array();
     
         $data = json_decode($specials, true);
+
+        error_log('Searching for: ' . $category);
+        error_log('Specials: ' . print_r($data, true));
         
         // Initialize an array to hold the filtered results
         $filtered_specials = array();
         
         // Iterate through the data and filter based on category and disable status
         foreach ($data as $special) {
-            if ($special['category'] == $category && !$special['disable']) {
-                error_log('Matched category: ' . $special['category']);
+            // Check if the provided category exists in the special's category array
+            if (is_array($special['category']) && in_array($category, $special['category']) && !$special['disable']) {
+                error_log('Matched category: ' . $category);
                 $filtered_specials[] = $special;
             }
         }
@@ -44,6 +48,7 @@ class VMB_HELPER {
     
         return $filtered_specials;
     }
+    
 
     function get_specials($json, $key, $value) {
     
