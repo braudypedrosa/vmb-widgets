@@ -1,6 +1,6 @@
 {
     "name": "vmb-widgets",
-    "version": "2.0.61",
+    "version": "2.1",
     "description": "Custom made plugin for Vacation Myrtle Beach.",
     "main": "index.js",
     "scripts": {
