@@ -43,7 +43,6 @@ class Vmb_Specials_Functions {
 
         $api_helper = new VMB_API_HELPER();
         $vmb_settings = json_decode(get_option('vmb_settings'));
-        $synced = (get_option('vmb_api_specials_synced') != '') ? get_option('vmb_api_specials_synced') : false;
     
         $endpoint = 'https://external.guestdesk.com/partner/v1/System/Packages';
         $message = $code = '';
@@ -62,88 +61,84 @@ class Vmb_Specials_Functions {
             'Accept: application/json'
         );
     
-        $sanitizedArray = array();
-        $existingSpecials = json_decode(get_option('vmb_api_cached_specials'), true) ?: [];
-        $newSpecialsIDs = array();
-    
-        if (!$synced) {
-            foreach ($resorts as $resort) {
-                $siteName = get_field('site_name', $resort->ID);
-                $resortID = $resort->ID;
-                $resortName = get_the_title($resort->ID);
-    
-                $params = array(
-                    "language" => "",
-                    "requestId" => "",
-                    "requestTime" => gmdate('Y-m-d\TH:i:s.v\Z'),
-                    "sites" => array(
-                        array('siteName' => $siteName)
-                    )
-                );
-    
-                $results = $api_helper->GuestDeskApiRequest($endpoint, 'POST', $params, $headers);
-    
-                if ($results['code'] !== 'success') {
-                    $message = 'Sync error!';
-                    continue; // Skip to the next resort if there's an API error
-                } else {
-                    $message = "Specials synced successfully!";
-                }
+        
+        foreach ($resorts as $resort) {
+            $siteName = get_field('site_name', $resort->ID);
+            $resortID = $resort->ID;
+            $resortName = get_the_title($resort->ID);
 
-                $code = $results['code'];
-    
-                $response = $results['response'][$siteName] ?? [];
-    
-                foreach ($response['Packages'] as $package) {
-                    $packageID = $package['PackageId'];
-                    $newSpecialsIDs[] = $packageID;
-    
-                    $active = $package['Active'];
-                    $promote = $package['Promote'];
-                    $bookable = $package['Bookable'];
-    
-                    if ($active && $bookable && $promote) {
-                        $sanitized = array(
-                            'id' => $packageID,
-                            'resort_id' => $resortID,
-                            'resort' => $resortName,
-                            'name' => $package['PackageDisplayName'],
-                            'description' => $package['PackageShortDescription'],
-                            'expiration' => $package['CalendarEndDate'],
-                            'category' => $package['AvailablePromoCodes'],
-                            'modified' => false
-                        );
-    
-                        // Check if this special exists in the current cache and if it's marked as modified
-                        $existingSpecialKey = array_search($packageID, array_column($existingSpecials, 'id'));
-    
-                        if ($existingSpecialKey === false || !isset($existingSpecials[$existingSpecialKey]['modified']) || !$existingSpecials[$existingSpecialKey]['modified']) {
-                            $sanitizedArray[] = $sanitized;
-                        } else {
-                            
-                            // always update promo code regardless if the special is modified or not
-                            $existingSpecials[$existingSpecialKey]['promo_code'];
+            $sanitizedArray = array();
+            $existingSpecials = json_decode(get_post_meta('vmb_resort_specials'), true) ?: [];
+            $newSpecialsIDs = array();
 
-                            // Keep the existing special if it's modified
-                            $sanitizedArray[] = $existingSpecials[$existingSpecialKey];
-                        }
-                    }
+            $params = array(
+                "language" => "",
+                "requestId" => "",
+                "requestTime" => gmdate('Y-m-d\TH:i:s.v\Z'),
+                "sites" => array(
+                    array('siteName' => $siteName)
+                )
+            );
 
-                    // generate promo codes
-                    $this->create_promo($package['AvailablePromoCodes']);
-                }
+            $results = $api_helper->GuestDeskApiRequest($endpoint, 'POST', $params, $headers);
+
+            if ($results['code'] !== 'success') {
+                $message = 'Sync error!';
+                continue; // Skip to the next resort if there's an API error
+            } else {
+                $message = "Specials synced successfully!";
             }
-    
+
+            $code = $results['code'];
+
+            $response = $results['response'][$siteName] ?? [];
+
+            foreach ($response['Packages'] as $package) {
+                $packageID = $package['PackageId'];
+                $newSpecialsIDs[] = $packageID;
+
+                $active = $package['Active'];
+                $promote = $package['Promote'];
+                $bookable = $package['Bookable'];
+
+                if ($active && $bookable && $promote) {
+                    $sanitized = array(
+                        'id' => $packageID,
+                        'resort_id' => $resortID,
+                        'resort' => $resortName,
+                        'name' => $package['PackageDisplayName'],
+                        'description' => $package['PackageShortDescription'],
+                        'expiration' => $package['CalendarEndDate'],
+                        'category' => $package['AvailablePromoCodes'],
+                        'modified' => false
+                    );
+
+                    // Check if this special exists in the current cache and if it's marked as modified
+                    $existingSpecialKey = array_search($packageID, array_column($existingSpecials, 'id'));
+
+                    if ($existingSpecialKey === false || !isset($existingSpecials[$existingSpecialKey]['modified']) || !$existingSpecials[$existingSpecialKey]['modified']) {
+                        $sanitizedArray[] = $sanitized;
+                    } else {
+                        
+                        // always update promo code regardless if the special is modified or not
+                        $existingSpecials[$existingSpecialKey]['promo_code'];
+
+                        // Keep the existing special if it's modified
+                        $sanitizedArray[] = $existingSpecials[$existingSpecialKey];
+                    }
+                }
+
+                // generate promo codes
+                $this->create_promo($package['AvailablePromoCodes']);
+            }
+
             // Filter the sanitized array to remove specials not in the new specials IDs
             $sanitizedArray = array_filter($sanitizedArray, function ($special) use ($newSpecialsIDs) {
                 return in_array($special['id'], $newSpecialsIDs);
             });
-    
+        
             // Update the option with the combined array
-            update_option('vmb_api_cached_specials', json_encode(array_values($sanitizedArray))); // Ensure array is reindexed
-            update_option('vmb_api_specials_synced', true);
-        } else {
-            $message = "Specials currently in synced.";
+            update_post_meta($resortID, 'vmb_resort_specials', json_encode(array_values($sanitizedArray))); // Ensure array is reindexed
         }
     
         header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=" . $code . "&msg=" . $message );
@@ -156,8 +151,6 @@ class Vmb_Specials_Functions {
         // Get all existing promo codes
         $currentPromos = get_option('vmb_specials_category') ? json_decode(get_option('vmb_specials_category', true)) : [];
         $newPromos = [];
-    
-        error_log('Current Promo Stack: ' . print_r($currentPromos, true));
     
         foreach($promoCode as $code) {
             // Slugify the promo code
