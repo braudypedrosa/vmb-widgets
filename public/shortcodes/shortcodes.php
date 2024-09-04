@@ -202,8 +202,7 @@ function display_special_category($atts) {
 
         foreach($specials as $special) {
             
-
-            $post_id = $helper->get_resort_id_by_name($special['resort']);
+            $post_id = $special['resort_id'];
 
             if($post_id) {
 

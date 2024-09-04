@@ -110,7 +110,8 @@ class Vmb_Specials_Functions {
                         'description' => $package['PackageShortDescription'],
                         'expiration' => $package['CalendarEndDate'],
                         'category' => $package['AvailablePromoCodes'],
-                        'modified' => false
+                        'modified' => false,
+                        'disable' => false
                     );
 
                     // Check if this special exists in the current cache and if it's marked as modified
@@ -138,7 +139,7 @@ class Vmb_Specials_Functions {
             });
         
             // Update the option with the combined array
-            update_post_meta($resortID, 'vmb_resort_specials', json_encode(array_values($sanitizedArray))); // Ensure array is reindexed
+            update_post_meta($resortID, 'vmb_resort_specials', json_encode(array_values($sanitizedArray), JSON_UNESCAPED_UNICODE)); // Ensure array is reindexed
         }
     
         header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=" . $code . "&msg=" . $message );

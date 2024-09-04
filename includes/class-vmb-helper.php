@@ -24,27 +24,37 @@ class VMB_HELPER {
 
     function filter_specials_by_category($category) {
         // Get specials
-        $specials = get_option('vmb_api_cached_specials') ? get_option('vmb_api_cached_specials') : array();
-    
-        $data = json_decode($specials, true);
+        // $specials = get_option('vmb_api_cached_specials') ? get_option('vmb_api_cached_specials') : array();
+
+        $specials = array();
+
+        $resorts = get_posts(array(
+            'post_type' => 'resort',
+            'numberposts' => -1
+        ));
+
+        foreach($resorts as $resort) {
+            $specials = array_merge($specials, json_decode(get_post_meta($resort->ID, 'vmb_resort_specials', true), true));
+        }
+        
 
         error_log('Searching for: ' . $category);
-        error_log('Specials: ' . print_r($data, true));
+        // error_log('Specials: ' . print_r($specials, true));
         
-        // Initialize an array to hold the filtered results
+        // // Initialize an array to hold the filtered results
         $filtered_specials = array();
         
         // Iterate through the data and filter based on category and disable status
-        foreach ($data as $special) {
+        foreach ($specials as $special) {
             // Check if the provided category exists in the special's category array
             if (is_array($special['category']) && in_array($category, $special['category']) && !$special['disable']) {
-                error_log('Matched category: ' . $category);
-                $filtered_specials[] = $special;
+
+                $filtered_specials = array_merge($filtered_specials, array($special));
             }
         }
     
         // Debugging: Log the filtered results
-        error_log('Filtered results: ' . print_r($filtered_specials, true));
+        // error_log('Filtered results: ' . print_r($filtered_specials, true));
     
         return $filtered_specials;
     }
