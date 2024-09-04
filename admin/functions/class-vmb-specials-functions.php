@@ -60,6 +60,8 @@ class Vmb_Specials_Functions {
             'Content-Type: application/json',
             'Accept: application/json'
         );
+
+        $cached_specials = array();
     
         
         foreach ($resorts as $resort) {
@@ -140,7 +142,10 @@ class Vmb_Specials_Functions {
         
             // Update the option with the combined array
             update_post_meta($resortID, 'vmb_resort_specials', json_encode(array_values($sanitizedArray), JSON_UNESCAPED_UNICODE)); // Ensure array is reindexed
+            $cached_specials = array_merge($cached_specials, array_values($sanitizedArray));
         }
+
+        update_option('vmb_api_cached_specials', json_encode($cached_specials));
     
         header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=" . $code . "&msg=" . $message );
         exit;

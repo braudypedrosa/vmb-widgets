@@ -41,16 +41,16 @@ function loadCategories(categories = '') {
 }
 
 // Fetch categories from the server
-// function fetchCategories() {
-//     return jQuery.ajax({
-//         url: vmb_ajax.ajax_url,
-//         type: 'POST',
-//         data: { 
-//             action: 'get_specials_meta',
-//             option: 'vmb_specials_category'
-//         }
-//     });
-// }
+function fetchCategories() {
+    return jQuery.ajax({
+        url: vmb_ajax.ajax_url,
+        type: 'POST',
+        data: { 
+            action: 'get_specials_meta',
+            option: 'vmb_specials_category'
+        }
+    });
+}
 
 
 // Build and display category table

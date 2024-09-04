@@ -35,26 +35,26 @@
                         <label for="specialId" class="form-label">ID:</label>
                         <input type="text" readonly disabled class="form-control dt-input" id="specialId" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="specialResort" class="form-label">Resort:</label>
                         <input type="text" readonly disabled class="form-control dt-input" id="specialResort" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="specialName" class="form-label">Name:</label>
                         <input type="text" class="form-control dt-input" id="specialName" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="specialDescription" class="form-label">Description:</label>
                         <textarea class="form-control dt-input" id="specialDescription" required></textarea>
                     </div>
+
                     <div class="mb-3" style="display:none;">
                         <label for="specialExpiration" class="form-label">Expiration:</label>
                         <input type="date" readonly disabled class="form-control dt-input" id="specialExpiration" required>
                     </div>
-                    <!-- <div class="mb-3">
-                        <label for="specialCategory" class="form-label">Category:</label>
-                        <select class="form-control dt-input" id="specialCategory"></select>
-                    </div> -->
   
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="specialDisable">
@@ -82,40 +82,19 @@
         // Get the values from the form fields
         const name = document.getElementById('specialName').value;
         const description = document.getElementById('specialDescription').value;
-        // const category = document.getElementById('specialCategory').value;
         const disable = document.getElementById('specialDisable').checked;
         const editSpecialIndex = document.getElementById('editSpecialIndex').value;
 
         const table = document.getElementById('specialsTable').getElementsByTagName('tbody')[0];
 
-        if (editSpecialIndex === '') {
-            // Add new special
-            const newRow = table.insertRow();
-            newRow.setAttribute('data-modified', 'false'); // Add modified attribute
-            newRow.setAttribute('data-disable', disable); // Add disable attribute
-
-            const nameCell = newRow.insertCell(2);
-            const descriptionCell = newRow.insertCell(3);
-            // const categoryCell = newRow.insertCell(5);
-            const actionCell = newRow.insertCell(6);
-
-            nameCell.textContent = name;
-            descriptionCell.textContent = description;
-            // categoryCell.innerHTML = category;
-            actionCell.innerHTML = `
-                <button class="btn btn-sm btn-warning" onclick="editSpecial(${table.rows.length - 1})">Edit</button>
-                <button class="btn btn-sm ${disable ? 'btn-danger' : 'btn-secondary'}" onclick="toggleDisableSpecial(${table.rows.length - 1}, this)">
-                    ${disable ? 'Disabled' : 'Disable'}
-                </button>
-            `;
-        } else {
+        if (editSpecialIndex !== '') {
             // Update existing special
             const dataTable = jQuery('#specialsTable').DataTable();
             const row = dataTable.row(editSpecialIndex).node();
             row.cells[2].textContent = name;
             row.cells[3].textContent = description;
-            // row.cells[5].textContent = category;
             row.setAttribute('data-modified', 'true'); // Mark row as modified
+            row.setAttribute('data-updated', 'true'); // Mark row as modified
             row.setAttribute('data-disable', disable); // Mark row as disabled
 
 
@@ -132,21 +111,32 @@
         const dataTable = jQuery('#specialsTable').DataTable();
         const rows = dataTable.rows().nodes(); // Get all rows as an array of nodes
 
+        const modifiedSpecial = [];
+
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
-            specials.push({
+
+            const updated = row.getAttribute('data-updated') === 'true';
+
+            const special = {
                 id: row.cells[0].textContent,
-                resort: row.cells[1].textContent,
+                resort_id: row.cells[1].getAttribute('data-resort-id'),
                 name: row.cells[2].textContent,
                 description: row.cells[3].textContent,
                 expiration: row.cells[4].textContent,
-                // category: row.cells[5].textContent,
-                disable: row.getAttribute('data-disable') === 'true', // Include disable attribute
-                modified: row.getAttribute('data-modified') === 'true' // Include modified attribute
-            });
+                category: row.cells[5].textContent,
+                disable: row.getAttribute('data-disable') === 'true', 
+                modified: row.getAttribute('data-modified') === 'true'
+            };
+
+            specials.push(special); 
+
+            if (updated) {
+                modifiedSpecial = special;
+            }
         }
 
-        saveSpecials(specials);
+        saveSpecials(specials, modifiedSpecial);
 
         // Clear the form fields
         document.getElementById('specialForm').reset();
@@ -164,8 +154,8 @@
         // Fetch categories and generate table
         fetchCategories().done(function(response) {
             if (response.success) {
-                const categories = response.data;
-                generateSpecialsTable(specials, categories);
+
+                generateSpecialsTable(specials);
 
                 const dataTable = jQuery('#specialsTable').DataTable({
                     "pageLength": 20,

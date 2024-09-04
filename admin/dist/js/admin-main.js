@@ -64,16 +64,16 @@ function loadCategories(categories = '') {
 }
 
 // Fetch categories from the server
-// function fetchCategories() {
-//     return jQuery.ajax({
-//         url: vmb_ajax.ajax_url,
-//         type: 'POST',
-//         data: { 
-//             action: 'get_specials_meta',
-//             option: 'vmb_specials_category'
-//         }
-//     });
-// }
+function fetchCategories() {
+    return jQuery.ajax({
+        url: vmb_ajax.ajax_url,
+        type: 'POST',
+        data: { 
+            action: 'get_specials_meta',
+            option: 'vmb_specials_category'
+        }
+    });
+}
 
 
 // Build and display category table
@@ -211,8 +211,9 @@ function buildCategoryTable(tableBody, category, index) {
 // }
 
 
+
 // Generate table rows with dropdowns for categories
-function generateSpecialsTable(specials, categories) {
+function generateSpecialsTable(specials) {
     const tableBody = document.getElementById('specialsTable').getElementsByTagName('tbody')[0];
     tableBody.innerHTML = '';
 
@@ -222,30 +223,26 @@ function generateSpecialsTable(specials, categories) {
         newRow.setAttribute('data-disable', special.disable); // new update: Add disable attribute
         newRow.innerHTML = `
             <td>${special.id}</td>
-            <td>${special.resort}</td>
+            <td data-resort-id="${special.resort_id}">${special.resort}</td>
             <td>${special.name}</td>
             <td>${special.description}</td>
             <td>${formatDate(special.expiration)}</td>
-            <td>${special.category ? special.category.join(', ')  : ''}</td>
+            <td>${Array.isArray(special.category) ? special.category.join(', ') : special.category }</td>
             <td class="action-buttons">
                 <button class="btn btn-sm btn-warning" onclick="editSpecial(${index})">Edit</button>
                 <button class="btn btn-sm ${special.disable ? 'btn-danger' : 'btn-secondary'}" onclick="toggleDisableSpecial(${index}, this)">
                     ${special.disable ? 'Disabled' : 'Disable'}
                 </button>
             </td>
-        `; // new update: Add Disable button with dynamic classes and text
+        `; 
     });
 }
 
-// Function to reset the form and modal title for specials
-function resetSpecialForm() {
-    document.getElementById('specialForm').reset();
-    document.getElementById('specialModalLabel').textContent = 'Add New Special';
-    document.getElementById('editSpecialIndex').value = '';
-}
+
 
 // Function to save the specials to the server
-function saveSpecials(specials) {
+function saveSpecials(specials, modifiedSpecials = '') {
+    console.log(modifiedSpecials);
     jQuery.ajax({
         url: vmb_ajax.ajax_url,
         type: 'POST',
@@ -258,7 +255,7 @@ function saveSpecials(specials) {
                 alert('Failed to save specials');
             } else {
                 Swal.fire(
-                    'Saved!',
+                    'Saved successfully!',
                     '',
                     'success'
                 );
@@ -278,7 +275,7 @@ function editSpecial(visualIndex) {
     const name = cells[2].textContent;
     const description = cells[3].textContent;
     const expiration = cells[4].textContent;
-    // const category = cells[5].textContent;
+    const category = cells[5].textContent;
 
     document.getElementById('specialId').value = id;
     document.getElementById('specialResort').value = resort;
@@ -299,30 +296,44 @@ function toggleDisableSpecial(index, button) {
     const dataTable = jQuery('#specialsTable').DataTable();
     const row = dataTable.row(index).node();
     const isDisabled = row.getAttribute('data-disable') === 'true';
+    
 
     row.setAttribute('data-disable', !isDisabled);
+    row.setAttribute('data-updated', 'true'); 
     button.className = `btn btn-sm ${!isDisabled ? 'btn-danger' : 'btn-secondary'}`;
     button.textContent = !isDisabled ? 'Disabled' : 'Disable';
     
     // Update the cached specials in the server
     const specials = [];
+    let modifiedSpecial = [];
     const rows = dataTable.rows().nodes(); // Get all rows as an array of nodes
 
     for (let i = 0; i < rows.length; i++) {
+
         const row = rows[i];
-        specials.push({
+
+        const updated = row.getAttribute('data-updated') === 'true';
+
+        const special = {
             id: row.cells[0].textContent,
+            resort_id: row.cells[1].getAttribute('data-resort-id'),
             resort: row.cells[1].textContent,
             name: row.cells[2].textContent,
             description: row.cells[3].textContent,
             expiration: row.cells[4].textContent,
             category: row.cells[5].textContent,
-            disable: row.getAttribute('data-disable') === 'true', // Include disable attribute
-            modified: row.getAttribute('data-modified') === 'true' // Include modified attribute
-        });
+            disable: row.getAttribute('data-disable') === 'true', 
+            modified: row.getAttribute('data-modified') === 'true'
+        };
+
+        specials.push(special); 
+
+        if (updated) {
+            modifiedSpecial = special;
+        }
     }
 
-    saveSpecials(specials);
+    saveSpecials(specials, modifiedSpecial);
 }
 
 // Fetch categories from the server
@@ -336,3 +347,10 @@ function fetchSpecials() {
         }
     });
 }
+
+// Function to reset the form and modal title for specials
+// function resetSpecialForm() {
+//     document.getElementById('specialForm').reset();
+//     document.getElementById('specialModalLabel').textContent = 'Add New Special';
+//     document.getElementById('editSpecialIndex').value = '';
+// }
