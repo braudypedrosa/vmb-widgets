@@ -79,16 +79,18 @@ function display_vmb_specials($atts) {
     
     $atts = shortcode_atts(
 		array(
-			'resort_name' => '',
+			'id' => '',
 		), $atts, 
         'specials' );
 
         $cached_specials = get_option('vmb_api_cached_specials', true);
-        $specials = $helper->get_specials($cached_specials, 'resort', $atts['resort_name']);
+
+        $specials = $helper->get_specials($cached_specials, 'resort_id', $atts['id']);
         
         foreach($specials as $special) {
            
-            if( !$special['disabled'] ) {
+            if( !$special['disable'] ) {
+
 				$packageID = $special['id'];
 				$name = $special['name'];
 				$reservationURL = get_field('reservation_url', $special['resort_id']);
