@@ -233,6 +233,13 @@ class Vmb_Widgets {
 
 		// specials function hooks
 		$this->loader->add_action( 'admin_post_sync_vmb_specials', $specials_functions, 'sync_specials');
+		$this->loader->add_action( 'admin_post_individual_sync_vmb_special', $specials_functions, 'individual_sync_special');
+		// Schedule the WP CRON Job to run "sync_special" once a day
+		if (!wp_next_scheduled('sync_specials_daily')) {
+			wp_schedule_event(time(), 'daily', 'sync_specials_daily');
+		}
+		// Hook the function to the CRON event
+		$this->loader->add_action( 'sync_specials_daily', $specials_functions, 'sync_specials');
 
 		// enqueue hooks
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );

@@ -39,16 +39,18 @@ class Vmb_Specials_Functions {
 
 	}
 
-    public function sync_specials_for_resort() {
+    public function individual_sync_special() {
 
         $api_helper = new VMB_API_HELPER();
         $vmb_settings = json_decode(get_option('vmb_settings'));
     
         $endpoint = 'https://external.guestdesk.com/partner/v1/System/Packages';
         $message = $code = '';
+
+        $resortID = $_POST['individual_sync_resort_selector'] ;
     
         $resort = get_post($resortID);
-        
+
         if (!$resort || $resort->post_type !== 'resort' || $resort->post_status !== 'publish') {
             $message = 'Invalid resort ID!';
             header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=error&msg=" . $message );
@@ -262,7 +264,6 @@ class Vmb_Specials_Functions {
         exit;
     }
 
-
     private function create_promo($promoCode) {
 
         // Get all existing promo codes
@@ -300,5 +301,5 @@ class Vmb_Specials_Functions {
             error_log('No new promos to add.');
         }
     }
-    
+ 
 }

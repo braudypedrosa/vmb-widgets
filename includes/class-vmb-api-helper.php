@@ -106,7 +106,7 @@ class VMB_API_HELPER {
                             'post_title'=> ucfirst($firstname) .' '. ucfirst($lastname),
                             'post_type'=> 'vmb_reviews',
                             'post_content' => $comment,
-                            'post_status'=> 'draft'
+                            'post_status'=> 'publish'
                         ));
                     } else { // update logic here
 
