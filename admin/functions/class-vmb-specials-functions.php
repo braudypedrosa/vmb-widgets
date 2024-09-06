@@ -51,6 +51,8 @@ class Vmb_Specials_Functions {
     
         $resort = get_post($resortID);
 
+        error_log('Resort ID: ' . $resortID);
+
         if (!$resort || $resort->post_type !== 'resort' || $resort->post_status !== 'publish') {
             $message = 'Invalid resort ID!';
             header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=error&msg=" . $message );
@@ -71,7 +73,11 @@ class Vmb_Specials_Functions {
         $resortName = get_the_title($resort->ID);
 
         $sanitizedArray = array();
-        $existingSpecials = json_decode(get_post_meta('vmb_resort_specials', $resort->ID, true)) ?: [];
+
+        $existingSpecials = json_decode(get_post_meta($resortID, 'vmb_resort_specials', true), true) ?: [];
+
+        error_log('Existing Specials: ' . print_r($existingSpecials, true));
+
         $newSpecialsIDs = array();
 
         $params = array(
@@ -296,9 +302,9 @@ class Vmb_Specials_Functions {
         if (!empty($newPromos)) {
             $updatedPromos = array_merge($currentPromos, $newPromos);
             update_option('vmb_specials_category', json_encode(array_values($updatedPromos)));
-            error_log('Updated Promo Stack: ' . print_r($updatedPromos, true));
+            // error_log('Updated Promo Stack: ' . print_r($updatedPromos, true));
         } else {
-            error_log('No new promos to add.');
+            // error_log('No new promos to add.');
         }
     }
  
