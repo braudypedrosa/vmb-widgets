@@ -241,14 +241,16 @@ function generateSpecialsTable(specials) {
 
 
 // Function to save the specials to the server
-function saveSpecials(specials, modifiedSpecials = '') {
-    console.log(modifiedSpecials);
+function saveSpecials(specials, modifiedSpecial = '') {
+    console.log(modifiedSpecial);
+
     jQuery.ajax({
         url: vmb_ajax.ajax_url,
         type: 'POST',
         data: {
             action: 'save_table',
             jsonData: JSON.stringify(specials),
+            modifiedSpecial: JSON.stringify(modifiedSpecial)
         },
         success: function(response) {
             if (!response.success) {

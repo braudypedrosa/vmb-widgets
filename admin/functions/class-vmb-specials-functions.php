@@ -39,6 +39,117 @@ class Vmb_Specials_Functions {
 
 	}
 
+    public function sync_specials_for_resort() {
+
+        $api_helper = new VMB_API_HELPER();
+        $vmb_settings = json_decode(get_option('vmb_settings'));
+    
+        $endpoint = 'https://external.guestdesk.com/partner/v1/System/Packages';
+        $message = $code = '';
+    
+        $resort = get_post($resortID);
+        
+        if (!$resort || $resort->post_type !== 'resort' || $resort->post_status !== 'publish') {
+            $message = 'Invalid resort ID!';
+            header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=error&msg=" . $message );
+            exit;
+        }
+    
+        $auth = base64_encode($vmb_settings->guestdesk_username . ':' . $vmb_settings->guestdesk_password);
+    
+        $headers = array(
+            'Authorization: Basic ' . $auth,
+            'Content-Type: application/json',
+            'Accept: application/json'
+        );
+
+        $cached_specials = array();
+    
+        $siteName = get_field('site_name', $resort->ID);
+        $resortName = get_the_title($resort->ID);
+
+        $sanitizedArray = array();
+        $existingSpecials = json_decode(get_post_meta('vmb_resort_specials', $resort->ID, true)) ?: [];
+        $newSpecialsIDs = array();
+
+        $params = array(
+            "language" => "",
+            "requestId" => "",
+            "requestTime" => gmdate('Y-m-d\TH:i:s.v\Z'),
+            "sites" => array(
+                array('siteName' => $siteName)
+            )
+        );
+
+        $results = $api_helper->GuestDeskApiRequest($endpoint, 'POST', $params, $headers);
+
+        if ($results['code'] !== 'success') {
+            $message = 'Sync error!';
+            header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=error&msg=" . $message );
+            exit;
+        } else {
+            $message = "Specials synced successfully!";
+        }
+
+        $code = $results['code'];
+
+        $response = $results['response'][$siteName] ?? [];
+
+        foreach ($response['Packages'] as $package) {
+            $packageID = $package['PackageId'];
+            $newSpecialsIDs[] = $packageID;
+
+            $active = $package['Active'];
+            $promote = $package['Promote'];
+            $bookable = $package['Bookable'];
+
+            if ($active && $bookable && $promote) {
+                $sanitized = array(
+                    'id' => $packageID,
+                    'resort_id' => $resortID,
+                    'resort' => $resortName,
+                    'name' => $package['PackageDisplayName'],
+                    'description' => $package['PackageShortDescription'],
+                    'expiration' => $package['CalendarEndDate'],
+                    'category' => $package['AvailablePromoCodes'],
+                    'modified' => false,
+                    'disable' => false
+                );
+
+                // Check if this special exists in the current cache and if it's marked as modified
+                $existingSpecialKey = array_search($packageID, array_column($existingSpecials, 'id'));
+
+                if ($existingSpecialKey === false || !isset($existingSpecials[$existingSpecialKey]['modified']) || !$existingSpecials[$existingSpecialKey]['modified']) {
+                    $sanitizedArray[] = $sanitized;
+                } else {
+                    
+                    // always update promo code regardless if the special is modified or not
+                    $existingSpecials[$existingSpecialKey]['promo_code'];
+
+                    // Keep the existing special if it's modified
+                    $sanitizedArray[] = $existingSpecials[$existingSpecialKey];
+                }
+            }
+
+            // generate promo codes
+            $this->create_promo($package['AvailablePromoCodes']);
+        }
+
+        // Filter the sanitized array to remove specials not in the new specials IDs
+        $sanitizedArray = array_filter($sanitizedArray, function ($special) use ($newSpecialsIDs) {
+            return in_array($special['id'], $newSpecialsIDs);
+        });
+    
+        // Update the option with the combined array
+        update_post_meta($resortID, 'vmb_resort_specials', json_encode(array_values($sanitizedArray), JSON_UNESCAPED_UNICODE)); // Ensure array is reindexed
+        $cached_specials = array_merge($cached_specials, array_values($sanitizedArray));
+
+        update_option('vmb_api_cached_specials', json_encode($cached_specials));
+    
+        header("Location: " . get_bloginfo("url") . "/wp-admin/admin.php?page=vmb_settings&status=" . $code . "&msg=" . $message );
+        exit;
+    }
+
     public function sync_specials() {
 
         $api_helper = new VMB_API_HELPER();

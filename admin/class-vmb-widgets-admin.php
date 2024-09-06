@@ -395,11 +395,30 @@ class Vmb_Widgets_Admin {
 
 	function save_table() {
 		$jsonString = isset($_POST['jsonData']) ? $_POST['jsonData'] : '';
-    
+
 		// Remove backslashes
 		$cleanedJsonString = stripslashes($jsonString);
+		$modifiedSpecial = isset($_POST['modifiedSpecial']) ? stripslashes($_POST['modifiedSpecial']) : '';
 
-		error_log( 'Table Data: ' . $cleanedJsonString );
+
+		if ($modifiedSpecial != '') {
+			$modifiedSpecial = json_decode($modifiedSpecial, true);
+			$resort_id = $modifiedSpecial['resort_id'];
+
+			error_log('Resort ID: ' . $resort_id);
+			
+			$specials = json_decode(get_post_meta($resort_id, 'vmb_resort_specials', true), true);
+
+			foreach ($specials as $index => $special) {
+				if($special['id'] == $modifiedSpecial['id']) {
+					$specials[$index] = $modifiedSpecial;
+					break;
+				}	
+			}
+			
+			update_post_meta($resort_id, 'vmb_resort_specials', json_encode(array_values($specials), JSON_UNESCAPED_UNICODE));
+		}
+		
 
 		update_option('vmb_api_cached_specials', $cleanedJsonString);
 		update_option('vmb_api_specials_synced', false);

@@ -111,7 +111,7 @@
         const dataTable = jQuery('#specialsTable').DataTable();
         const rows = dataTable.rows().nodes(); // Get all rows as an array of nodes
 
-        const modifiedSpecial = [];
+        let modifiedSpecial = [];
 
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
@@ -121,6 +121,7 @@
             const special = {
                 id: row.cells[0].textContent,
                 resort_id: row.cells[1].getAttribute('data-resort-id'),
+                resort: row.cells[1].textContent,
                 name: row.cells[2].textContent,
                 description: row.cells[3].textContent,
                 expiration: row.cells[4].textContent,
