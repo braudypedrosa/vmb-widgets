@@ -76,7 +76,7 @@ class Vmb_Specials_Functions {
 
         $existingSpecials = json_decode(get_post_meta($resortID, 'vmb_resort_specials', true), true) ?: [];
 
-        error_log('Existing Specials: ' . print_r($existingSpecials, true));
+        // error_log('Existing Specials: ' . print_r($existingSpecials, true));
 
         $newSpecialsIDs = array();
 
@@ -189,7 +189,7 @@ class Vmb_Specials_Functions {
             $resortName = get_the_title($resort->ID);
 
             $sanitizedArray = array();
-            $existingSpecials = json_decode(get_post_meta('vmb_resort_specials'), true) ?: [];
+            $existingSpecials = json_decode(get_post_meta($resortID, 'vmb_resort_specials', true), true) ?: [];
             $newSpecialsIDs = array();
 
             $params = array(
