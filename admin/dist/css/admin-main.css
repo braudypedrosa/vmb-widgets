@@ -54,6 +54,10 @@
   opacity: 0.8;
   transition: all 500ms ease-in-out;
 }
+
+.nav-tabs .nav-link:not(.active):hover {
+  color: white !important;
+}
 .dataTables_wrapper .dataTables_length {
   float: left;
   text-align: left;

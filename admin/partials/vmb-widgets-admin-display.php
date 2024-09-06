@@ -39,8 +39,26 @@ $vmb_settings = get_option('vmb_settings') ? json_decode(get_option('vmb_setting
         
     <?php } ?>
     </div>
-    <div class="vmb-widgets-section">
+</div>
 
+
+<div class="container">
+
+    <ul class="nav nav-tabs" id="setting-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active btn btn-primary mt-3" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="true">Settings</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link btn btn-primary mt-3" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">Reviews</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link btn btn-primary mt-3" id="specials-tab" data-bs-toggle="tab" data-bs-target="#specials" type="button" role="tab" aria-controls="specials" aria-selected="false">Specials</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="setting-tabs-content">
+
+        <div class="tab-pane fade show active" id="settings" role="tabpanel" aria-labelledby="settings-tab">
         <form class="vmb-form" method="post" action="<?php echo admin_url('admin-post.php'); ?>">
             <input type="hidden" name="action" value="save_vmb_settings" />
 
@@ -73,60 +91,83 @@ $vmb_settings = get_option('vmb_settings') ? json_decode(get_option('vmb_setting
                 <input class="vmb-input" type="text" name="category-slug" id="category-slug" value="<?= (($vmb_settings->category_slug != '' && isset($vmb_settings->category_slug)) ? $vmb_settings->category_slug : 'specialcode'); ?>">
             </div>
             
-            <button class="vmb-button" type="submit">Save Settings</button> 
+            <button class="btn btn-primary mt-3" type="submit">Save Settings</button> 
         </form>
+        </div>
+        <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
 
-        <h3 class="vmb-title">Syncing</h3>
-        
-        <h4>Individual Sync</h4>
-        <form class="vmb-form" method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-            <input type="hidden" name="action" value="individual_sync_vmb_reviews" />
+            <h4 class="mt-3">Individual Sync</h4>
+            <form class="vmb-form" method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                <input type="hidden" name="action" value="individual_sync_vmb_reviews" />
 
-            <div class="vmb-input-wrapper input-number">
-                <label for="individual_minimum_rating">Minimum rating to pull: (defaults to 5)</label>
-                <input class="vmb-input" type="number" min="1" max="5" step="1" name="individual_minimum_rating" id="individual_minimum_rating">
-            </div>
+                <div class="vmb-input-wrapper input-number">
+                    <label for="individual_minimum_rating">Minimum rating to pull: (defaults to 5)</label>
+                    <input class="vmb-input" type="number" min="1" max="5" step="1" name="individual_minimum_rating" id="individual_minimum_rating">
+                </div>
 
-            <div class="vmb-input-wrapper input-number">
-                <label for="individual_reviews_to_pull">Reviews to Pull: (defaults to 10)</label>
-                <input class="vmb-input" type="text" name="individual_reviews_to_pull" id="individual_reviews_to_pull">
-            </div>
-            
-            <div class="vmb-input-wrapper input-select">
-            <label for="individual_sync_resort_selector">Select Resort:</label>
-            <?php 
+                <div class="vmb-input-wrapper input-number">
+                    <label for="individual_reviews_to_pull">Reviews to Pull: (defaults to 10)</label>
+                    <input class="vmb-input" type="text" name="individual_reviews_to_pull" id="individual_reviews_to_pull">
+                </div>
+                
+                <div class="vmb-input-wrapper input-select">
+                <label for="individual_sync_resort_selector">Select Resort:</label>
+                <?php 
 
-                $resorts = get_posts(array('post_type' => 'resort', 'posts_per_page' => -1));
-                        
-                echo '<select name="individual_sync_resort_selector" required>';
-                foreach ($resorts as $resort) {
-                    echo '<option value="' . $resort->ID . '">' . $resort->post_title . '</option>';
-                }
-                echo '</select>';
-            
-            ?>
-            </div>
-            <button class="vmb-button sync-button" type="submit">Sync Reviews</button> 
-        </form>
+                    $resorts = get_posts(array('post_type' => 'resort', 'posts_per_page' => -1));
+                            
+                    echo '<select name="individual_sync_resort_selector" required>';
+                    foreach ($resorts as $resort) {
+                        echo '<option value="' . $resort->ID . '">' . $resort->post_title . '</option>';
+                    }
+                    echo '</select>';
+                
+                ?>
+                </div>
+                <button class="btn btn-primary mt-3" type="submit">Sync Review</button> 
+            </form>
 
-       
+            <h4 class="mt-3">Bulk Sync</h4>
+            <form class="vmb-form" method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+    
+                <input type="hidden" name="action" value="sync_vmb_reviews" />
+                
+                <button class="btn btn-primary mt-3" type="submit">Sync Reviews</button> 
+            </form>
+        </div>
+        <div class="tab-pane fade" id="specials" role="tabpanel" aria-labelledby="specials-tab">
 
+            <h4 class="mt-3">Individual Sync</h4>
+                <form class="vmb-form" method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                    <input type="hidden" name="action" value="individual_sync_vmb_special" />
 
-        <h4>Bulk Sync</h4>
-        <form class="vmb-form" method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-        
-            <input type="hidden" name="action" value="sync_vmb_reviews" />
-            
-            <button class="vmb-button sync-button" type="submit">Sync Reviews</button> 
-        </form>
+                    <div class="vmb-input-wrapper input-select">
+                        <label for="individual_sync_resort_selector">Select Resort:</label>
+                        <?php 
 
-        <form class="vmb-form" method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-            <input type="hidden" name="action" value="sync_vmb_specials" />
-            
-            <button class="vmb-button sync-button" type="submit">Sync Specials</button> 
-        </form>
+                        $resorts = get_posts(array('post_type' => 'resort', 'posts_per_page' => -1));
+                                
+                        echo '<select name="individual_sync_resort_selector" required>';
+                        foreach ($resorts as $resort) {
+                            echo '<option value="' . $resort->ID . '">' . $resort->post_title . '</option>';
+                        }
+                        echo '</select>';
+                    
+                    ?>
+                    </div>
+                    <button class="btn btn-primary mt-3" type="submit">Sync Special</button> 
+                </form>
+
+            <h4 class="mt-3">Bulk Sync</h4>
+            <form class="vmb-form" method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                <input type="hidden" name="action" value="sync_vmb_specials" />
+                
+                <button class="btn btn-primary mt-3" type="submit">Sync Specials</button> 
+            </form>
+        </div>
     </div>
 </div>
+
 
 
 <style>
