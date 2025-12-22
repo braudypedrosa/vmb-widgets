@@ -9,7 +9,7 @@
  * that starts the plugin.
  *
  * @link              https://buildupbookings.com/
- * @since             2.1.0
+ * @since             2.2.0
  * @package           Vmb_Widgets
  *
  * @wordpress-plugin

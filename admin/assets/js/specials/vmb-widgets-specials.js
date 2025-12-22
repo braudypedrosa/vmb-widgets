@@ -13,6 +13,7 @@ function generateSpecialsTable(specials) {
             <td data-resort-id="${special.resort_id}">${special.resort}</td>
             <td>${special.name}</td>
             <td>${special.description}</td>
+            <td>${formatDate(special.start)}</td>
             <td>${formatDate(special.expiration)}</td>
             <td>${Array.isArray(special.category) ? special.category.join(', ') : special.category }</td>
             <td class="action-buttons">
@@ -63,13 +64,15 @@ function editSpecial(visualIndex) {
     const resort = cells[1].textContent;
     const name = cells[2].textContent;
     const description = cells[3].textContent;
-    const expiration = cells[4].textContent;
-    const category = cells[5].textContent;
+    const start = cells[4].textContent;
+    const expiration = cells[5].textContent;
+    const category = cells[6].textContent;
 
     document.getElementById('specialId').value = id;
     document.getElementById('specialResort').value = resort;
     document.getElementById('specialName').value = name;
     document.getElementById('specialDescription').value = description;
+    document.getElementById('specialStart').value = start;
     document.getElementById('specialExpiration').value = expiration;
     document.getElementById('specialDisable').checked = row.getAttribute('data-disable') === 'true';
 
@@ -109,8 +112,9 @@ function toggleDisableSpecial(index, button) {
             resort: row.cells[1].textContent,
             name: row.cells[2].textContent,
             description: row.cells[3].textContent,
-            expiration: row.cells[4].textContent,
-            category: row.cells[5].textContent,
+            start: row.cells[4].textContent,
+            expiration: row.cells[5].textContent,
+            category: row.cells[6].textContent,
             disable: row.getAttribute('data-disable') === 'true', 
             modified: row.getAttribute('data-modified') === 'true'
         };

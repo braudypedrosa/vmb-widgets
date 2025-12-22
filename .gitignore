@@ -2,3 +2,4 @@ node_modules
 bundled
 languages
 .env
+.DS_Store

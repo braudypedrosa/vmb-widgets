@@ -9,6 +9,7 @@
                     <th>Resort</th>
                     <th>Name</th>
                     <th>Description</th>
+                    <th>Start</th>
                     <th>Expiration</th>
                     <th>Promo Codes</th>
                     <th>Actions</th>
@@ -49,6 +50,10 @@
                     <div class="mb-3">
                         <label for="specialDescription" class="form-label">Description:</label>
                         <textarea class="form-control dt-input" id="specialDescription" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="specialStart" class="form-label">Start:</label>
+                        <input type="date" readonly disabled class="form-control dt-input" id="specialStart" required>
                     </div>
 
                     <div class="mb-3" style="display:none;">
@@ -124,8 +129,9 @@
                 resort: row.cells[1].textContent,
                 name: row.cells[2].textContent,
                 description: row.cells[3].textContent,
-                expiration: row.cells[4].textContent,
-                category: row.cells[5].textContent,
+                start: row.cells[4].textContent,
+                expiration: row.cells[5].textContent,
+                category: row.cells[6].textContent,
                 disable: row.getAttribute('data-disable') === 'true', 
                 modified: row.getAttribute('data-modified') === 'true'
             };

@@ -96,7 +96,8 @@ function display_vmb_specials($atts) {
 				$reservationURL = get_field('reservation_url', $special['resort_id']);
 
 				$description = $special['description'];
-				$expiration = $special['expiration'];
+                $start = $special['start'] ?? date('n/j/Y');
+				$expiration = $special['expiration'] ?? date('n/j/Y');
 
 
 				$output .= '<div class="vmb-special" id="special-'.$packageID.'">
@@ -106,7 +107,7 @@ function display_vmb_specials($atts) {
 									<p class="description">'.$description.'</p>
 									<div class="validity">
 										<span>Valid:</span>
-										<span>'.date('n/j/Y').' - '.date_format(date_create($expiration), 'n/j/Y').'</span>
+										<span>'.date_format(date_create($start), 'n/j/Y').' - '.date_format(date_create($expiration), 'n/j/Y').'</span>
 									</div>
 									<a class="theme-button" href="'.$reservationURL.'?packageId='.$packageID.'" tabindex="0">Book Now</a>
 								</div>
